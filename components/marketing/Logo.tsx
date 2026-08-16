@@ -75,7 +75,7 @@ export function LogoMark({
  * ("Proof first. Price second.") — every claim ends with a verified period.
  */
 export function Logo({
-  name = "Promopedia",
+  name = "DaddyPromoos",
   tone = "dark",
   className,
   markClassName,

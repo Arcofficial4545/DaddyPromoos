@@ -17,7 +17,7 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Search",
-  description: "Search stores, coupons, and articles across Promopedia.",
+  description: "Search stores, coupons, and articles across DaddyPromoos.",
   alternates: { canonical: "/search" },
   robots: { index: false },
 };
@@ -46,7 +46,7 @@ export default async function SearchPage({
   return (
     <>
       <PageHeader
-        title="Search Promopedia"
+        title="Search DaddyPromoos"
         description={
           query
             ? `${totalResults} ${totalResults === 1 ? "result" : "results"} for "${query}"`

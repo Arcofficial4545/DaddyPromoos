@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/marketing/PageHeader";
 export const metadata: Metadata = {
   title: "How We Make Money",
   description:
-    "Promopedia's disclosure: some links earn us a commission at no cost to you. Here's exactly how that works and what it never affects.",
+    "DaddyPromoos's disclosure: some links earn us a commission at no cost to you. Here's exactly how that works and what it never affects.",
   alternates: { canonical: "/disclosure" },
 };
 
@@ -18,7 +18,7 @@ export default function DisclosurePage() {
         <Container size="narrow">
           <div className="space-y-5 text-body-lg leading-relaxed text-ink-muted">
             <p>
-              When you click through to a store from Promopedia and make a
+              When you click through to a store from DaddyPromoos and make a
               purchase, we may earn a commission from that store. This costs
               you nothing — prices and discounts are identical whether you
               arrive through our links or not.

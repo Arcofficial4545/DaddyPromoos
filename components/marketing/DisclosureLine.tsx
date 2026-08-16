@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function DisclosureLine({ className }: { className?: string }) {
   return (
     <p className={cn("text-sm text-ink-subtle", className)}>
-      We may earn a commission if you buy through links on Promopedia. This never
+      We may earn a commission if you buy through links on DaddyPromoos. This never
       affects our scores or verdicts.
     </p>
   );

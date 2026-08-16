@@ -135,7 +135,7 @@ export default async function ToolPage({
       { name: store.name, href: `/tools/${store.slug}` },
     ]),
   ];
-  if (hasReview) jsonLdItems.push(reviewLd(store, "Promopedia editor"));
+  if (hasReview) jsonLdItems.push(reviewLd(store, "DaddyPromoos editor"));
   if (store.faq?.length) jsonLdItems.push(faqLd(store.faq));
 
   return (

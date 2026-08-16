@@ -8,7 +8,7 @@
  * Google's keyless favicon service. Nothing is hotlinked at runtime: assets are
  * downloaded to /public and the returned URLs are local.
  *
- * Marks are used nominatively to identify the brands Promopedia covers. Delete
+ * Marks are used nominatively to identify the brands DaddyPromoos covers. Delete
  * the file and the letter-tile fallback returns automatically.
  */
 import * as cheerio from "cheerio";

@@ -1368,7 +1368,7 @@ const reviewExtras: Record<string, ReviewExtra> = {
       ),
       h2("Who it's for — and who it isn't"),
       pt(
-        "Use Cursor if you write software and want the AI at the center of your editor instead of off to the side. It is, for our money, the strongest tool in its category for that reader. But Promopedia's core audience is founders and builders shipping products, many of whom don't write code — and for them Cursor is the wrong starting point. If you want to go from an idea to a deployed, working app without opening a repository, an AI app builder like Lovable will get you there; Cursor is where you'd graduate once you (or an engineer you hire) own the code.",
+        "Use Cursor if you write software and want the AI at the center of your editor instead of off to the side. It is, for our money, the strongest tool in its category for that reader. But DaddyPromoos's core audience is founders and builders shipping products, many of whom don't write code — and for them Cursor is the wrong starting point. If you want to go from an idea to a deployed, working app without opening a repository, an AI app builder like Lovable will get you there; Cursor is where you'd graduate once you (or an engineer you hire) own the code.",
       ),
       h2("Pricing, honestly"),
       pt(
@@ -1689,7 +1689,7 @@ const comparisonSeed: ComparisonSeed[] = [
     verdictB:
       "Choose Cursor if you write software for a living. Inside a real codebase it isn't close: Cursor is the better tool, and Lovable isn't trying to be.",
     bottomLine:
-      "For Promopedia's core reader — founders and builders shipping a product without a development background — Lovable wins. If you are a professional developer working in a real codebase, Cursor wins, and it isn't close. Both statements are true at once; pick the one that describes you.",
+      "For DaddyPromoos's core reader — founders and builders shipping a product without a development background — Lovable wins. If you are a professional developer working in a real codebase, Cursor wins, and it isn't close. Both statements are true at once; pick the one that describes you.",
     seoTitle: "Lovable vs Cursor (2026): AI App Builder or AI IDE?",
     seoDescription:
       "Lovable builds and deploys a full app from prompts; Cursor makes developers faster inside a real codebase. Which one wins depends on whether you write code — here is the honest split.",
@@ -1939,17 +1939,17 @@ async function main() {
     .values([
       {
         name: "Abdul Rehman Ch",
-        bio: "Founder and CEO of Promopedia. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
+        bio: "Founder and CEO of DaddyPromoos. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
         role: "Founder & CEO",
       },
       {
         name: "Maya Whitfield",
-        bio: "Senior Editor at Promopedia. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
+        bio: "Senior Editor at DaddyPromoos. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
         role: "Senior Editor",
       },
       {
         name: "Haw",
-        bio: "Editor at Promopedia. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
+        bio: "Editor at DaddyPromoos. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
         role: "Editor",
       },
     ])
@@ -2042,7 +2042,7 @@ async function main() {
         h2("The one question"),
         pt("Do you write code? Not \"could you learn\" — do you, today, read and steer code comfortably? That single answer decides almost everything, because the two categories are built for opposite sides of it."),
         h2("If you don't code: an AI app builder"),
-        pt("An app builder like Lovable takes your description and produces a working, deployed application — front end, backend, auth, hosting — without asking you to open a repository. For a founder or operator who wants a product live, this is the right tool, and the fact that it also leaves you standard code means you are not trapped when you grow. This is where most of the people reading Promopedia should start; our Lovable review and the app-builder roundup go deeper."),
+        pt("An app builder like Lovable takes your description and produces a working, deployed application — front end, backend, auth, hosting — without asking you to open a repository. For a founder or operator who wants a product live, this is the right tool, and the fact that it also leaves you standard code means you are not trapped when you grow. This is where most of the people reading DaddyPromoos should start; our Lovable review and the app-builder roundup go deeper."),
         couponEmbed(lovableOffer.id),
         h2("If you do code: an AI IDE"),
         pt("If you already write software, an app builder will feel like a cage. You want an AI IDE like Cursor: it sits inside a real codebase and makes you dramatically faster at the work you already do, with full control over every line. Handing a professional developer an app builder is like handing a chef a meal kit — it works, but it fights their skill. Our Cursor review and the AI IDE roundup cover the options."),
@@ -2180,7 +2180,7 @@ async function main() {
       title: "How we score every tool from 0 to 10",
       slug: "how-we-score-every-tool",
       excerpt:
-        "A number is only useful if you trust how it was made. Here is exactly what goes into a Promopedia score, and what never does.",
+        "A number is only useful if you trust how it was made. Here is exactly what goes into a DaddyPromoos score, and what never does.",
       categoryId: catBySlug.get("ai-tools")!.id,
       tags: ["methodology", "reviews", "trust"],
       readingMinutes: 5,
@@ -2814,14 +2814,14 @@ async function main() {
   });
 
   const adminEmail = (
-    process.env.ADMIN_EMAIL ?? "admin@promopedia.local"
+    process.env.ADMIN_EMAIL ?? "admin@daddypromoos.local"
   ).toLowerCase();
   const adminPassword =
     process.env.ADMIN_PASSWORD ?? randomBytes(9).toString("base64url");
   await db.insert(adminUsers).values({
     email: adminEmail,
     passwordHash: hashPassword(adminPassword),
-    name: "Promopedia Admin",
+    name: "DaddyPromoos Admin",
     role: "admin",
   });
 

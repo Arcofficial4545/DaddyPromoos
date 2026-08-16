@@ -6,9 +6,9 @@ import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/marketing/PageHeader";
 
 export const metadata: Metadata = {
-  title: "About Promopedia",
+  title: "About DaddyPromoos",
   description:
-    "Who we are, how we score tools, and why Promopedia exists: independent reviews of AI tools and SaaS, paired with codes that actually work. Founded by Abdul Rehman Ch.",
+    "Who we are, how we score tools, and why DaddyPromoos exists: independent reviews of AI tools and SaaS, paired with codes that actually work. Founded by Abdul Rehman Ch.",
   alternates: { canonical: "/about" },
 };
 
@@ -35,7 +35,7 @@ const founders = [
     name: "Abdul Rehman Ch",
     role: "Founder & CEO",
     initials: "AR",
-    bio: "Abdul founded Promopedia on a simple idea: buyers deserve reviews that name the catch, not just the praise. He sets the editorial standard and guards the rule that no company can pay for a score.",
+    bio: "Abdul founded DaddyPromoos on a simple idea: buyers deserve reviews that name the catch, not just the praise. He sets the editorial standard and guards the rule that no company can pay for a score.",
   },
   {
     name: "Ahmed Raza Hassan",
@@ -50,7 +50,7 @@ export default function AboutPage() {
     <>
       <PageHeader
         title="Independent reviews for people who read the fine print"
-        description="Promopedia covers AI tools, SaaS products, and digital services, scores them from 0 to 10, and pairs that coverage with verified codes so you never overpay for software again."
+        description="DaddyPromoos covers AI tools, SaaS products, and digital services, scores them from 0 to 10, and pairs that coverage with verified codes so you never overpay for software again."
       />
       <Section>
         <Container>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               Why we exist
             </h2>
             <p>
-              Promopedia started with a simple irritation. Software buyers
+              DaddyPromoos started with a simple irritation. Software buyers
               routinely pay 20 to 30 percent more than they need to, because
               working discounts are scattered across newsletters, partner pages,
               and expired listicles. We fix that by doing the tedious part,
@@ -136,7 +136,7 @@ export default function AboutPage() {
             <figure className="rounded-[var(--radius-card)] border border-line bg-mint/40 p-8 sm:p-10">
               <blockquote className="space-y-4 text-body leading-relaxed text-ink-muted">
                 <p>
-                  I built Promopedia because I was tired of buying software on
+                  I built DaddyPromoos because I was tired of buying software on
                   faith. The reviews I could find were either paid placements
                   dressed up as opinion, or thin roundups that never told me the
                   one thing I actually needed to know, which is where the tool
@@ -158,7 +158,7 @@ export default function AboutPage() {
               <figcaption className="mt-6 font-display text-base font-semibold text-pine">
                 Abdul Rehman Ch
                 <span className="ml-2 font-sans text-sm font-normal text-ink-subtle">
-                  Founder &amp; CEO, Promopedia
+                  Founder &amp; CEO, DaddyPromoos
                 </span>
               </figcaption>
             </figure>

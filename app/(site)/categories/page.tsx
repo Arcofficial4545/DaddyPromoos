@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "AI tools, no-code builders, SaaS, accounting, e-commerce, design, productivity, and marketing — find verified deals by category.",
   alternates: { canonical: "/categories" },
   openGraph: {
-    title: "Categories | Promopedia",
+    title: "Categories | DaddyPromoos",
     images: [ogImageUrl("Browse by category")],
   },
 };
@@ -43,7 +43,7 @@ export default async function CategoriesPage() {
       />
       <PageHeader
         title="Browse by category"
-        description="Every deal on Promopedia, organized by what you're actually shopping for."
+        description="Every deal on DaddyPromoos, organized by what you're actually shopping for."
       />
       <Section>
         <Container size="wide">

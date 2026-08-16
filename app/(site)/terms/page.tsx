@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/marketing/PageHeader";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "The terms that govern your use of Promopedia.",
+  description: "The terms that govern your use of DaddyPromoos.",
   alternates: { canonical: "/terms" },
 };
 
@@ -17,9 +17,9 @@ export default function TermsPage() {
         <Container size="narrow">
           <div className="space-y-8 text-ink-muted">
             <div>
-              <h2 className="text-h4 font-bold text-pine">Using Promopedia</h2>
+              <h2 className="text-h4 font-bold text-pine">Using DaddyPromoos</h2>
               <p className="mt-3 leading-relaxed">
-                Promopedia is a free editorial service. You may browse, share
+                DaddyPromoos is a free editorial service. You may browse, share
                 links, and use the codes we publish for personal or business
                 purchases. Scraping the site, republishing our content at
                 scale, or artificially inflating deal metrics is not permitted.
@@ -47,7 +47,7 @@ export default function TermsPage() {
             <div>
               <h2 className="text-h4 font-bold text-pine">Liability</h2>
               <p className="mt-3 leading-relaxed">
-                To the fullest extent permitted by law, Promopedia is not
+                To the fullest extent permitted by law, DaddyPromoos is not
                 liable for losses arising from your use of the site, expired
                 offers, or your dealings with third-party stores.
               </p>

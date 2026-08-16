@@ -13,8 +13,8 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 declare global {
-  var __promopediaSql: ReturnType<typeof postgres> | undefined;
-  var __promopediaDb: ReturnType<typeof createClient> | undefined;
+  var __daddypromoosSql: ReturnType<typeof postgres> | undefined;
+  var __daddypromoosDb: ReturnType<typeof createClient> | undefined;
 }
 
 function createClient() {
@@ -35,19 +35,19 @@ function createClient() {
   // it has to *pipeline* (concurrency > max), so keeping max above per-request
   // concurrency means every query gets its own connection and it never pipelines.
   const sql =
-    globalThis.__promopediaSql ??
+    globalThis.__daddypromoosSql ??
     postgres(url, {
       prepare: false,
       max: 15,
       idle_timeout: 20,
       connect_timeout: 15,
     });
-  globalThis.__promopediaSql = sql;
+  globalThis.__daddypromoosSql = sql;
   return drizzle(sql, { schema });
 }
 
 /** Singleton across dev HMR reloads. */
-export const db = globalThis.__promopediaDb ?? createClient();
-globalThis.__promopediaDb = db;
+export const db = globalThis.__daddypromoosDb ?? createClient();
+globalThis.__daddypromoosDb = db;
 
 export type DbClient = typeof db;

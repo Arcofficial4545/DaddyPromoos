@@ -71,7 +71,7 @@ export function Header() {
               : "h-14 border-white/30 bg-mint/50 shadow-[0_4px_24px_-6px_rgba(13,64,41,0.2)]",
         )}
       >
-        <Link href="/" aria-label="Promopedia home">
+        <Link href="/" aria-label="DaddyPromoos home">
           <Logo tone={onHero ? "light" : "dark"} />
         </Link>
 

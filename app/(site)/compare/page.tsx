@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "Honest, criteria-by-criteria comparisons of the tools people actually weigh against each other. See which wins on the dimensions that matter to you.",
   alternates: { canonical: "/compare" },
   openGraph: {
-    title: "Compare Tools — Promopedia",
+    title: "Compare Tools — DaddyPromoos",
     description: "Head-to-head matchups scored on the criteria that matter.",
     images: [ogImageUrl("Compare", "Head-to-head, criteria by criteria")],
   },

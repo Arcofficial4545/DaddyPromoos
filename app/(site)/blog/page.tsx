@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     "Sharp editorial coverage of AI tools, SaaS, and digital services: hands-on reviews, head-to-head comparisons, and guides to paying less.",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "The Promopedia Blog",
-    images: [ogImageUrl("The Promopedia blog", "Reviews, comparisons, and buying guides")],
+    title: "The DaddyPromoos Blog",
+    images: [ogImageUrl("The DaddyPromoos blog", "Reviews, comparisons, and buying guides")],
   },
 };
 
@@ -57,7 +57,7 @@ export default async function BlogIndexPage({
         ])}
       />
       <PageHeader
-        title="The Promopedia blog"
+        title="The DaddyPromoos blog"
         description="Reviews, comparisons, and buying guides for AI tools, SaaS, and digital services. We write the way we want to read: opinionated, specific, and honest about the trade-offs."
       />
       <Section padding="tight">

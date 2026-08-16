@@ -19,7 +19,7 @@ export function VerdictCard({
   lastReviewedAt,
   useItFor,
   skipItIf,
-  authorName = "Promopedia editor",
+  authorName = "DaddyPromoos editor",
 }: VerdictCardProps) {
   return (
     <Card tone="mint" className="p-6 sm:p-8">

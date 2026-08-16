@@ -24,10 +24,10 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Reviews — Every Verdict, Earned",
   description:
-    "Independent, research-based reviews of AI tools and SaaS. Every review carries a Promopedia score and a verdict that states the catch, not just the praise.",
+    "Independent, research-based reviews of AI tools and SaaS. Every review carries a DaddyPromoos score and a verdict that states the catch, not just the praise.",
   alternates: { canonical: "/reviews" },
   openGraph: {
-    title: "Reviews — Promopedia",
+    title: "Reviews — DaddyPromoos",
     description: "Independent editorial reviews of the tools that matter.",
     images: [ogImageUrl("Reviews", "Every verdict, earned")],
   },

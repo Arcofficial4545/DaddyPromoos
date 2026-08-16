@@ -16,7 +16,7 @@ const CONTACT_EMAIL = "arcoffical1@gmail.com";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Questions, corrections, partnership inquiries, or a dead code to report. Reach the Promopedia team at arcoffical1@gmail.com. We read everything.",
+    "Questions, corrections, partnership inquiries, or a dead code to report. Reach the DaddyPromoos team at arcoffical1@gmail.com. We read everything.",
   alternates: { canonical: "/contact" },
 };
 

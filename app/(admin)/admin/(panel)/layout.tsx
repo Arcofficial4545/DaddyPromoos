@@ -22,7 +22,7 @@ export default async function AdminLayout({
           href="/admin"
           className="px-6 pt-6 pb-4 font-display text-lg font-bold text-white"
         >
-          Promopedia
+          DaddyPromoos
           <span className="mt-0.5 block font-mono text-[0.6rem] font-normal tracking-[0.25em] text-mint/50 uppercase">
             Admin
           </span>
@@ -48,7 +48,7 @@ export default async function AdminLayout({
         {/* Mobile topbar */}
         <div className="flex items-center justify-between border-b border-line bg-pine-900 px-4 py-3 md:hidden">
           <Link href="/admin" className="font-display font-bold text-white">
-            Promopedia Admin
+            DaddyPromoos Admin
           </Link>
           <form action={logout}>
             <button

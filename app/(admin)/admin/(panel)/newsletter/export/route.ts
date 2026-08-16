@@ -25,7 +25,7 @@ export async function GET() {
   return new Response(rows.join("\n"), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="promopedia-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`,
+      "Content-Disposition": `attachment; filename="daddypromoos-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`,
     },
   });
 }

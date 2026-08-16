@@ -437,10 +437,10 @@ export const newsletterSubscribers = pgTable(
 export const settings = pgTable("settings", {
   /** Singleton row — always `"singleton"`. */
   id: text("id").primaryKey().default("singleton"),
-  siteName: text("site_name").notNull().default("Promopedia"),
+  siteName: text("site_name").notNull().default("DaddyPromoos"),
   seoDefaultTitle: text("seo_default_title")
     .notNull()
-    .default("Promopedia — Verified deals on AI tools and SaaS"),
+    .default("DaddyPromoos — Verified deals on AI tools and SaaS"),
   seoDefaultDescription: text("seo_default_description")
     .notNull()
     .default(
@@ -454,7 +454,7 @@ export const settings = pgTable("settings", {
   disclosureText: text("disclosure_text")
     .notNull()
     .default(
-      "When you buy through some links on Promopedia, we may earn a commission at no extra cost to you. This never influences what we cover or recommend.",
+      "When you buy through some links on DaddyPromoos, we may earn a commission at no extra cost to you. This never influences what we cover or recommend.",
     ),
   socialLinks: jsonb("social_links")
     .notNull()

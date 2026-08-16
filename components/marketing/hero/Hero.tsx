@@ -346,7 +346,7 @@ function HeroScoreChip({ card }: { card: HeroCard }) {
           {card.name}
         </p>
         <p className="font-mono text-[0.65rem] text-ink-subtle">
-          Promopedia score
+          DaddyPromoos score
         </p>
       </div>
       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-emerald font-mono text-xs font-bold text-pine">

@@ -2,7 +2,7 @@ import type { Category, Coupon, Store } from "@/lib/db/schema";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-export const SITE_NAME = "Promopedia";
+export const SITE_NAME = "DaddyPromoos";
 
 type JsonLdObject = Record<string, unknown>;
 

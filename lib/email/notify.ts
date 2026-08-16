@@ -33,7 +33,7 @@ export async function sendContactNotification(
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL ?? "arcoffical1@gmail.com";
   const from =
-    process.env.CONTACT_FROM_EMAIL ?? "Promopedia <onboarding@resend.dev>";
+    process.env.CONTACT_FROM_EMAIL ?? "DaddyPromoos <onboarding@resend.dev>";
 
   if (!apiKey) return false;
 

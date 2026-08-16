@@ -13,7 +13,7 @@ function Wordmark() {
     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
       <div style={{ width: 18, height: 44, backgroundColor: EMERALD, borderRadius: 4 }} />
       <div style={{ fontSize: 40, fontWeight: 700, color: WHITE, letterSpacing: "-0.02em" }}>
-        Promopedia
+        DaddyPromoos
       </div>
     </div>
   );
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   const variant = searchParams.get("variant");
 
   if (variant === "review") {
-    const name = (searchParams.get("title") ?? "Promopedia").slice(0, 60);
+    const name = (searchParams.get("title") ?? "DaddyPromoos").slice(0, 60);
     const score = (searchParams.get("score") ?? "").slice(0, 4);
     return new ImageResponse(
       (
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
             {score ? <ScoreDisc score={score} /> : null}
           </div>
           <div style={{ fontSize: 24, color: MINT, opacity: 0.7 }}>
-            Promopedia score · independent editorial review
+            DaddyPromoos score · independent editorial review
           </div>
         </div>
       ),
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
             <Col nm={b} sc={sb} />
           </div>
           <div style={{ fontSize: 24, color: MINT, opacity: 0.7 }}>
-            Head-to-head · Promopedia comparison
+            Head-to-head · DaddyPromoos comparison
           </div>
         </div>
       ),
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const title = (searchParams.get("title") ?? "Promopedia").slice(0, 120);
+  const title = (searchParams.get("title") ?? "DaddyPromoos").slice(0, 120);
   const subtitle = (searchParams.get("subtitle") ?? "").slice(0, 160);
 
   return new ImageResponse(
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
               borderRadius: 999,
             }}
           >
-            promopedia
+            daddypromoos
           </div>
         </div>
       </div>

@@ -39,7 +39,7 @@ export function OgPreview({ title, description, slug }: OgPreviewProps) {
         />
         <div className="border-t border-line bg-mint/40 px-3 py-2">
           <p className="font-mono text-[0.65rem] tracking-wide text-ink-subtle uppercase">
-            promopedia.com/blog/{slug || "post-slug"}
+            daddypromoos.com/blog/{slug || "post-slug"}
           </p>
           <p className="mt-0.5 truncate text-sm font-semibold text-ink">
             {debouncedTitle || "Untitled post"}

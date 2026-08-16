@@ -8,10 +8,10 @@ import { breadcrumbLd, ogImageUrl } from "@/lib/seo/jsonld";
 export const metadata: Metadata = {
   title: "How We Review — Our Methodology",
   description:
-    "How Promopedia researches, scores, and maintains its reviews — the five criteria, the 0–10 scale, how deals are verified, and our independence statement.",
+    "How DaddyPromoos researches, scores, and maintains its reviews — the five criteria, the 0–10 scale, how deals are verified, and our independence statement.",
   alternates: { canonical: "/how-we-review" },
   openGraph: {
-    title: "How We Review — Promopedia",
+    title: "How We Review — DaddyPromoos",
     description: "Our methodology for scoring tools and verifying offers.",
     images: [ogImageUrl("How We Review", "Our methodology")],
   },
@@ -63,7 +63,7 @@ export default function HowWeReviewPage() {
           <p className="mt-4 max-w-2xl text-body-lg text-mint/85">
             No automated scrapers, no fabricated stats, no invented methodology.
             Here is exactly how a tool earns a score and how deals get onto
-            Promopedia.
+            DaddyPromoos.
           </p>
         </Container>
       </Section>
@@ -91,7 +91,7 @@ export default function HowWeReviewPage() {
             </h2>
             <p className="mt-3 leading-relaxed text-ink-muted">
               Every tool is scored on the same five axes, each on a 0–10 scale.
-              The headline Promopedia score is our editorial read of how they
+              The headline DaddyPromoos score is our editorial read of how they
               add up for a typical buyer — not a raw average, and always ours.
             </p>
             <dl className="mt-6 divide-y divide-line border-y border-line">
@@ -142,7 +142,7 @@ export default function HowWeReviewPage() {
               Independence
             </h2>
             <p className="mt-3 leading-relaxed text-ink-muted">
-              Promopedia may earn a commission when you buy through some links.
+              DaddyPromoos may earn a commission when you buy through some links.
               That is how the site is funded, and it changes nothing about the
               scores or verdicts — a tool cannot buy a better review, and we say
               so plainly next to the links it applies to. If you ever think a

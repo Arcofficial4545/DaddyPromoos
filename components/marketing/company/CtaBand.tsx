@@ -36,7 +36,7 @@ export function CtaBand({
           <ExternalLink className="h-4 w-4" aria-hidden="true" />
         </a>
         <p className="mt-6 max-w-lg text-xs leading-relaxed text-mint/50">
-          Promopedia is an independent publisher. {brandName} and related marks
+          DaddyPromoos is an independent publisher. {brandName} and related marks
           belong to their respective owners. We may earn a commission when you
           use links on this page; this never affects our coverage.{" "}
           <Link

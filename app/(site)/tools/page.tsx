@@ -19,10 +19,10 @@ const PAGE_SIZE = 24;
 export const metadata: Metadata = {
   title: "All Tools — Reviewed AI Tools and SaaS",
   description:
-    "Every tool on Promopedia: AI tools, SaaS products, and digital services with editorial reviews, scores, and the best available deals.",
+    "Every tool on DaddyPromoos: AI tools, SaaS products, and digital services with editorial reviews, scores, and the best available deals.",
   alternates: { canonical: "/tools" },
   openGraph: {
-    title: "All Tools | Promopedia",
+    title: "All Tools | DaddyPromoos",
     images: [ogImageUrl("All tools", "Reviewed, scored, and priced")],
   },
 };

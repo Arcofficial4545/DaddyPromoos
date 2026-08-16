@@ -119,10 +119,10 @@ export async function Footer() {
                   <AtSign className="h-4 w-4" aria-hidden="true" />
                 </SocialButton>
               )}
-              <SocialButton href="/rss.xml" label="Promopedia RSS feed">
+              <SocialButton href="/rss.xml" label="DaddyPromoos RSS feed">
                 <Rss className="h-4 w-4" aria-hidden="true" />
               </SocialButton>
-              <SocialButton href="/contact" label="Contact Promopedia">
+              <SocialButton href="/contact" label="Contact DaddyPromoos">
                 <Mail className="h-4 w-4" aria-hidden="true" />
               </SocialButton>
             </div>

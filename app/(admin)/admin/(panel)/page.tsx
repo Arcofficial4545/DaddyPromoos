@@ -68,7 +68,7 @@ export default async function AdminDashboardPage() {
     <>
       <AdminPageHeader
         title="Dashboard"
-        description="What's happening across Promopedia right now."
+        description="What's happening across DaddyPromoos right now."
       />
 
       {/* KPI cards */}

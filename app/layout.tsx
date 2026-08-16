@@ -25,11 +25,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: "Promopedia — Verified deals on AI tools and SaaS",
-    template: "%s | Promopedia",
+    default: "DaddyPromoos — Verified deals on AI tools and SaaS",
+    template: "%s | DaddyPromoos",
   },
   description:
-    "Promopedia is a deals and discovery platform for AI tools, SaaS products, and digital services. Editorial reviews plus verified coupon codes, updated daily.",
+    "DaddyPromoos is a deals and discovery platform for AI tools, SaaS products, and digital services. Editorial reviews plus verified coupon codes, updated daily.",
 };
 
 export default function RootLayout({

@@ -32,7 +32,7 @@ export async function generateMetadata({
   if (!category) return { title: "Category not found" };
   return {
     title: `${category.name} — Articles and Guides`,
-    description: `Reviews, comparisons, and guides about ${category.name.toLowerCase()} from the Promopedia editorial team.`,
+    description: `Reviews, comparisons, and guides about ${category.name.toLowerCase()} from the DaddyPromoos editorial team.`,
     alternates: { canonical: `/blog/category/${category.slug}` },
   };
 }

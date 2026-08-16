@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/marketing/PageHeader";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "What Promopedia collects, what it never collects, and your choices.",
+  description: "What DaddyPromoos collects, what it never collects, and your choices.",
   alternates: { canonical: "/privacy" },
 };
 

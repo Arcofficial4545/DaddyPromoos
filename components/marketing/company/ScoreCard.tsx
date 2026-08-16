@@ -15,7 +15,7 @@ const CIRC = 2 * Math.PI * R;
 
 /**
  * The editorial Score Card (Section 7.2). A large mono numeral inside a thin
- * emerald arc (= score/10), the "Promopedia score" label, a link to the
+ * emerald arc (= score/10), the "DaddyPromoos score" label, a link to the
  * methodology, and the primary "Visit {tool}" CTA. Null score → "Review in
  * progress" so the page still works as a profile.
  */
@@ -70,7 +70,7 @@ export function ScoreCard({
       )}
 
       <p className="mt-4 font-mono text-[0.7rem] font-semibold tracking-[0.15em] text-ink-subtle uppercase">
-        {score !== null ? "Promopedia score" : "Not yet scored"}
+        {score !== null ? "DaddyPromoos score" : "Not yet scored"}
       </p>
       <Link
         href="/how-we-review"

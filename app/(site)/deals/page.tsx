@@ -21,10 +21,10 @@ const PAGE_SIZE = 20;
 export const metadata: Metadata = {
   title: "All Deals — Offers on AI Tools and SaaS",
   description:
-    "Every active deal and code on Promopedia, checked by our editors. Filter by category, sort by newest or expiring soon.",
+    "Every active deal and code on DaddyPromoos, checked by our editors. Filter by category, sort by newest or expiring soon.",
   alternates: { canonical: "/deals" },
   openGraph: {
-    title: "All Deals | Promopedia",
+    title: "All Deals | DaddyPromoos",
     images: [ogImageUrl("All deals", "Every active offer, verified")],
   },
 };

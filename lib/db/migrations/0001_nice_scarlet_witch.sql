@@ -1,0 +1,3 @@
+ALTER TABLE "settings" ALTER COLUMN "site_name" SET DEFAULT 'DaddyPromoos';--> statement-breakpoint
+ALTER TABLE "settings" ALTER COLUMN "seo_default_title" SET DEFAULT 'DaddyPromoos — Verified deals on AI tools and SaaS';--> statement-breakpoint
+ALTER TABLE "settings" ALTER COLUMN "disclosure_text" SET DEFAULT 'When you buy through some links on DaddyPromoos, we may earn a commission at no extra cost to you. This never influences what we cover or recommend.';

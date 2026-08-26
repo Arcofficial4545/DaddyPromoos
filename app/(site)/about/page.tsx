@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 const principles = [
   {
     icon: BadgeCheck,
-    title: "Every code gets tested",
-    body: "A deal does not ship until an editor has confirmed it applies at checkout. When a code dies, we pull it. An expired coupon costs you trust and us readers.",
+    title: "Offers come from official sources",
+    body: "We list what the brand publishes on its own pricing, education, or promotions page, and we link you straight there. We do not invent codes, and an offer only carries a verified stamp once a person has checked it and dated the check.",
   },
   {
     icon: Newspaper,
@@ -25,8 +25,8 @@ const principles = [
   },
   {
     icon: RefreshCcw,
-    title: "Updated daily",
-    body: "Offers rotate constantly in SaaS. Our feed is refreshed every day, and expiry dates sit on every ticket so you never plan around a dead deal.",
+    title: "Dated, not evergreen",
+    body: "SaaS pricing moves. Every pricing claim carries the date it was checked against the brand's own page, so you can see how fresh it is instead of taking our word for it.",
   },
 ];
 

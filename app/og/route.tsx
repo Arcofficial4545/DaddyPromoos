@@ -1,7 +1,9 @@
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
-export const runtime = "nodejs";
+// No `export const runtime` here: "nodejs" is already the default for route
+// handlers, and the segment config is rejected once `experimental.useCache`
+// is on (see next.config.ts).
 
 const PINE = "#0d4029";
 const EMERALD = "#1ec677";

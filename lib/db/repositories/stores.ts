@@ -1,5 +1,17 @@
 import "server-only";
-import { and, asc, count, desc, eq, gt, inArray, isNull, like, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  like,
+  or,
+  sql,
+} from "drizzle-orm";
 import { db } from "../client";
 import {
   categories,
@@ -37,6 +49,12 @@ async function attachMeta(rows: Store[]): Promise<StoreWithMeta[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((s) => s.id);
 
+  const liveCoupon = and(
+    inArray(coupons.storeId, ids),
+    eq(coupons.isActive, true),
+    or(isNull(coupons.expiresAt), gt(coupons.expiresAt, new Date())),
+  );
+
   const cats = await db
     .select({
       storeId: storeCategories.storeId,
@@ -48,46 +66,31 @@ async function attachMeta(rows: Store[]): Promise<StoreWithMeta[]> {
     .innerJoin(categories, eq(storeCategories.categoryId, categories.id))
     .where(inArray(storeCategories.storeId, ids));
 
+  // Active-coupon count and the best discount label in one grouped pass — this
+  // used to be two queries, the second of which pulled every live coupon row
+  // just to take the top label per store in JS. The label is the first row
+  // under the same `discount_value desc` ordering, so selection is unchanged.
+  //
+  // Sequential, but NOT because concurrent queries are unsafe — an earlier
+  // version of this comment claimed postgres.js pipelining crosses parameters,
+  // and that is measurably false (see the notes on the parameter-crossing
+  // investigation). `next build` does intermittently hit parameter crossing,
+  // but the homepage's own 11-query Promise.all is equally exposed, so keeping
+  // these two serial is not a fix for it. It just isn't worth one more
+  // in-flight query until that race is understood.
   const couponMeta = await db
     .select({
       storeId: coupons.storeId,
       activeCount: count(),
+      bestLabel: sql<
+        string | null
+      >`(array_agg(${coupons.discountLabel} order by ${coupons.discountValue} desc))[1]`,
     })
     .from(coupons)
-    .where(
-      and(
-        inArray(coupons.storeId, ids),
-        eq(coupons.isActive, true),
-        or(isNull(coupons.expiresAt), gt(coupons.expiresAt, new Date())),
-      ),
-    )
+    .where(liveCoupon)
     .groupBy(coupons.storeId);
 
-  // Best discount label = label of the active coupon with highest value.
-  const bestLabels = await db
-    .select({
-      storeId: coupons.storeId,
-      label: coupons.discountLabel,
-      value: coupons.discountValue,
-    })
-    .from(coupons)
-    .where(
-      and(
-        inArray(coupons.storeId, ids),
-        eq(coupons.isActive, true),
-        or(isNull(coupons.expiresAt), gt(coupons.expiresAt, new Date())),
-      ),
-    )
-    .orderBy(desc(coupons.discountValue));
-
-  const bestByStore = new Map<string, string>();
-  for (const row of bestLabels) {
-    if (!bestByStore.has(row.storeId)) bestByStore.set(row.storeId, row.label);
-  }
-
-  const countByStore = new Map(
-    couponMeta.map((m) => [m.storeId, m.activeCount]),
-  );
+  const metaByStore = new Map(couponMeta.map((m) => [m.storeId, m]));
   const catsByStore = new Map<string, StoreWithMeta["categories"]>();
   for (const c of cats) {
     const list = catsByStore.get(c.storeId) ?? [];
@@ -98,8 +101,8 @@ async function attachMeta(rows: Store[]): Promise<StoreWithMeta[]> {
   return rows.map((s) => ({
     ...s,
     categories: catsByStore.get(s.id) ?? [],
-    activeCouponCount: countByStore.get(s.id) ?? 0,
-    bestDiscountLabel: bestByStore.get(s.id) ?? null,
+    activeCouponCount: metaByStore.get(s.id)?.activeCount ?? 0,
+    bestDiscountLabel: metaByStore.get(s.id)?.bestLabel ?? null,
   }));
 }
 

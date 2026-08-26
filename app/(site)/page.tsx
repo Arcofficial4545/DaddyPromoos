@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { cacheLife } from "next/cache";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { CouponGrid } from "@/components/coupon/CouponGrid";
+import type { TicketCoupon } from "@/components/coupon/CouponTicket";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { CategoryIcon } from "@/components/marketing/CategoryIcon";
 import { Hero } from "@/components/marketing/hero/Hero";
@@ -30,49 +32,25 @@ import { listPublishedPosts } from "@/lib/db/repositories/posts";
 import { listReviewedStores } from "@/lib/db/repositories/stores";
 import { formatDate } from "@/lib/utils";
 
-// Cached (ISR): the DB is queried at most once per window, so the page is fast.
-// Per-visit rotation of the hero chips, head-to-head band, and reviews happens
-// client-side in the browser — no database hit on each load.
-export const revalidate = 3600;
+/** Everything the homepage reads from the DB, already narrowed to what the
+ * components render. Marked `"use cache"` so the fan-out below runs once per
+ * revalidate window rather than once per render — ISR only covers the built
+ * page, so without this every dev request and every regeneration paid for the
+ * full set of round trips again.
+ *
+ * `cacheLife` is the single cache config for this route. The route segment
+ * `export const revalidate = 3600` that used to sit alongside it was
+ * redundant: `cacheLife` sets the entry's explicit revalidate/expire/stale and
+ * Next propagates those up to the route, which is why the build route table
+ * reports an expire of 1d — a value the segment config cannot express.
+ *
+ * Per-visit rotation of the hero chips, head-to-head band, and reviews happens
+ * client-side in the browser, so caching here costs no variety.
+ */
+async function getHomeData() {
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 3600, expire: 86_400 });
 
-/** Kicker + left-aligned title, with an optional trailing link. */
-function SectionHead({
-  kicker,
-  title,
-  description,
-  href,
-  linkLabel,
-}: {
-  kicker: string;
-  title: string;
-  description?: string;
-  href?: string;
-  linkLabel?: string;
-}) {
-  return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p className="font-mono text-xs font-semibold tracking-[0.2em] text-ink-subtle uppercase">
-          {kicker}
-        </p>
-        <h2 className="mt-1.5 font-display text-3xl font-bold tracking-tight text-ink">
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-2 max-w-xl text-ink-muted">{description}</p>
-        )}
-      </div>
-      {href && linkLabel && (
-        <Button href={href} variant="secondary" size="sm">
-          {linkLabel}
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Button>
-      )}
-    </div>
-  );
-}
-
-export default async function HomePage() {
   const [
     { coupons: featuredCoupons },
     couponCount,
@@ -147,11 +125,88 @@ export default async function HomePage() {
       .map((c) => ({ label: c.name, href: `/categories/${c.slug}` })),
   ];
 
+  return {
+    featuredCoupons: featuredCoupons.map(toTicketCoupon) as TicketCoupon[],
+    couponCount,
+    categories,
+    // Drop `contentJson` and friends — the cards render only these fields, and
+    // the full Tiptap body would otherwise be serialized into the cache entry.
+    posts: latestPosts.map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      publishedAt: p.publishedAt,
+      readingMinutes: p.readingMinutes,
+      categoryName: p.category?.name ?? null,
+    })),
+    reviewItems,
+    matchups,
+    heroCards,
+    heroVsChips,
+    quickTags,
+    toolsReviewed: reviewedStores.length,
+    comparisonsCount: comparisons.length,
+  };
+}
+
+/** Kicker + left-aligned title, with an optional trailing link. */
+function SectionHead({
+  kicker,
+  title,
+  description,
+  href,
+  linkLabel,
+}: {
+  kicker: string;
+  title: string;
+  description?: string;
+  href?: string;
+  linkLabel?: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p className="font-mono text-xs font-semibold tracking-[0.2em] text-ink-subtle uppercase">
+          {kicker}
+        </p>
+        <h2 className="mt-1.5 font-display text-3xl font-bold tracking-tight text-ink">
+          {title}
+        </h2>
+        {description && (
+          <p className="mt-2 max-w-xl text-ink-muted">{description}</p>
+        )}
+      </div>
+      {href && linkLabel && (
+        <Button href={href} variant="secondary" size="sm">
+          {linkLabel}
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
+export default async function HomePage() {
+  const {
+    featuredCoupons,
+    couponCount,
+    categories,
+    posts: latestPosts,
+    reviewItems,
+    matchups,
+    heroCards,
+    heroVsChips,
+    quickTags,
+    toolsReviewed,
+    comparisonsCount,
+  } = await getHomeData();
+
   return (
     <>
       <Hero
-        toolsReviewed={reviewedStores.length}
-        comparisonsCount={comparisons.length}
+        toolsReviewed={toolsReviewed}
+        comparisonsCount={comparisonsCount}
         dealsCount={couponCount}
         cards={heroCards}
         vsChips={heroVsChips}
@@ -159,7 +214,7 @@ export default async function HomePage() {
       />
 
       <LogoMarquee
-        logos={reviewedStores.map((s) => ({
+        logos={reviewItems.map((s) => ({
           name: s.name,
           logoUrl: s.logoUrl,
         }))}
@@ -242,7 +297,7 @@ export default async function HomePage() {
             linkLabel="All deals"
           />
           <CouponGrid
-            coupons={featuredCoupons.map(toTicketCoupon)}
+            coupons={featuredCoupons}
             className="mt-6"
           />
         </Container>
@@ -269,7 +324,7 @@ export default async function HomePage() {
                   >
                     <p className="font-mono text-xs text-ink-subtle">
                       {post.publishedAt ? formatDate(post.publishedAt) : ""}
-                      {post.category ? ` · ${post.category.name}` : ""}
+                      {post.categoryName ? ` · ${post.categoryName}` : ""}
                       {` · ${post.readingMinutes} min read`}
                     </p>
                     <h3 className="mt-3 font-display text-2xl leading-snug font-semibold text-ink">

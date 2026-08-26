@@ -44,17 +44,45 @@ type HeroProps = {
 };
 
 /** Positions + entrance/parallax hooks for the floating evidence chips.
- * Four slots — balanced around the centered content without crowding. */
+ * Four slots — balanced around the centered content without crowding.
+ *
+ * Each slot owns its scroll-parallax tween rather than the timeline hard-coding
+ * all four: how many slots render depends on the data (one chip per scored tool
+ * and per published comparison, capped at four), so with no comparisons
+ * published only `a` and `b` exist and tweens for `c`/`d` would target nothing.
+ */
 const FLOAT_SLOTS = [
-  "hero-float-a absolute top-[18%] left-[4%] -rotate-3 idle-float",
-  "hero-float-b absolute top-[22%] right-[4%] rotate-2 idle-float [--float-duration:8s]",
-  "hero-float-c absolute bottom-[28%] left-[6%] rotate-1 idle-float [--float-duration:9s]",
-  "hero-float-d absolute bottom-[18%] right-[5%] -rotate-2 idle-float [--float-duration:7.5s]",
+  {
+    key: "a",
+    className: "absolute top-[18%] left-[4%] -rotate-3 idle-float",
+    parallax: { yPercent: -40, rotate: 6 },
+  },
+  {
+    key: "b",
+    className:
+      "absolute top-[22%] right-[4%] rotate-2 idle-float [--float-duration:8s]",
+    parallax: { yPercent: -30, rotate: -6 },
+  },
+  {
+    key: "c",
+    className:
+      "absolute bottom-[28%] left-[6%] rotate-1 idle-float [--float-duration:9s]",
+    parallax: { yPercent: -52, rotate: 4 },
+  },
+  {
+    key: "d",
+    className:
+      "absolute bottom-[18%] right-[5%] -rotate-2 idle-float [--float-duration:7.5s]",
+    parallax: { yPercent: -24, rotate: -5 },
+  },
 ];
 
-/** The hook: independent testing, a real score, and the tools worth buying. */
+/** The hook: independent research, a real score, and the tools worth buying.
+ * "Researched" not "Tested": every verdict on this site is desk research
+ * against official docs and pricing, not a hands-on lab test. Claiming
+ * otherwise is a compliance problem with the brands we cover. */
 const HEADLINE: { word: string; accent?: boolean }[] = [
-  { word: "Tested." },
+  { word: "Researched." },
   { word: "Scored." },
   { word: "Worth", accent: true },
   { word: "buying.", accent: true },
@@ -89,11 +117,48 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Rotate the floating chips per visit in the browser: SSR renders a stable
+  // first slice (no hydration mismatch), then we reshuffle on mount so the
+  // cached page still looks different on every refresh — with no DB hit.
+  // The first entry is the pinned flagship (Lovable card / Lovable-vs-Cursor
+  // chip): always shown. The remaining slot rotates on each visit.
+  const [pickedCards, setPickedCards] = useState(() => cards.slice(0, 2));
+  const [pickedVs, setPickedVs] = useState(() => vsChips.slice(0, 2));
+  useEffect(() => {
+    const pin = <T,>(items: T[], n: number) =>
+      items.length <= 1
+        ? items.slice(0, n)
+        : [items[0], ...shuffle(items.slice(1)).slice(0, n - 1)];
+    setPickedCards(pin(cards, 2));
+    setPickedVs(pin(vsChips, 2));
+  }, [cards, vsChips]);
+
+  // Interleave score chips and VS chips, then drop into the fixed slots.
+  const floatItems: React.ReactNode[] = [];
+  const maxLen = Math.max(pickedCards.length, pickedVs.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (pickedCards[i]) floatItems.push(<HeroScoreChip card={pickedCards[i]} />);
+    if (pickedVs[i]) floatItems.push(<HeroVsChip vs={pickedVs[i]} />);
+  }
+  const floats = floatItems.slice(0, FLOAT_SLOTS.length);
+  // The reshuffle above preserves length, so this is stable after mount and
+  // safe as an animation dependency.
+  const floatCount = floats.length;
+
+  // Lenis drives ScrollTrigger's update loop. Kept out of the animation effect
+  // below: `lenis` is undefined on the first client render and only becomes
+  // available once SmoothScroll mounts ReactLenis, so depending on it there
+  // would rebuild every tween a second time. It also needs its own teardown —
+  // the listener is not part of the GSAP context.
+  useEffect(() => {
+    if (!lenis || reducedMotion) return;
+    lenis.on("scroll", ScrollTrigger.update);
+    return () => lenis.off("scroll", ScrollTrigger.update);
+  }, [lenis, reducedMotion]);
+
   useGSAP(
     () => {
       if (reducedMotion) return;
-
-      lenis?.on("scroll", ScrollTrigger.update);
 
       // Kinetic headline: masked word rise, staggered.
       gsap.fromTo(
@@ -147,10 +212,11 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         },
       });
       tl.to(".hero-content", { yPercent: -14, opacity: 0.25 }, 0);
-      tl.to(".hero-float-a", { yPercent: -40, rotate: 6 }, 0);
-      tl.to(".hero-float-b", { yPercent: -30, rotate: -6 }, 0);
-      tl.to(".hero-float-c", { yPercent: -52, rotate: 4 }, 0);
-      tl.to(".hero-float-d", { yPercent: -24, rotate: -5 }, 0);
+      // Only the slots that actually rendered — anything beyond `floatCount`
+      // has no element and GSAP would warn that the target was not found.
+      for (const slot of FLOAT_SLOTS.slice(0, floatCount)) {
+        tl.to(`.hero-float-${slot.key}`, slot.parallax, 0);
+      }
 
       // Mouse parallax on the chip layer.
       if (!isTouch && cardsLayerRef.current) {
@@ -170,33 +236,16 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         return () => window.removeEventListener("mousemove", onMove);
       }
     },
-    { scope, dependencies: [reducedMotion, isTouch, lenis] },
+    {
+      scope,
+      dependencies: [reducedMotion, isTouch, floatCount],
+      // useGSAP already runs the callback inside a gsap.context() scoped to
+      // `scope`, but with a non-empty dependency array it defers the revert to
+      // unmount — so every re-run stacked another copy of these tweens on top
+      // of the live ones. This reverts the context before each re-run.
+      revertOnUpdate: true,
+    },
   );
-
-  // Rotate the floating chips per visit in the browser: SSR renders a stable
-  // first slice (no hydration mismatch), then we reshuffle on mount so the
-  // cached page still looks different on every refresh — with no DB hit.
-  // The first entry is the pinned flagship (Lovable card / Lovable-vs-Cursor
-  // chip): always shown. The remaining slot rotates on each visit.
-  const [pickedCards, setPickedCards] = useState(() => cards.slice(0, 2));
-  const [pickedVs, setPickedVs] = useState(() => vsChips.slice(0, 2));
-  useEffect(() => {
-    const pin = <T,>(items: T[], n: number) =>
-      items.length <= 1
-        ? items.slice(0, n)
-        : [items[0], ...shuffle(items.slice(1)).slice(0, n - 1)];
-    setPickedCards(pin(cards, 2));
-    setPickedVs(pin(vsChips, 2));
-  }, [cards, vsChips]);
-
-  // Interleave score chips and VS chips, then drop into the fixed slots.
-  const floatItems: React.ReactNode[] = [];
-  const maxLen = Math.max(pickedCards.length, pickedVs.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (pickedCards[i]) floatItems.push(<HeroScoreChip card={pickedCards[i]} />);
-    if (pickedVs[i]) floatItems.push(<HeroVsChip vs={pickedVs[i]} />);
-  }
-  const floats = floatItems.slice(0, FLOAT_SLOTS.length);
 
   return (
     <section
@@ -212,7 +261,10 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         aria-hidden="true"
       >
         {floats.map((chip, i) => (
-          <div key={i} className={`hero-float ${FLOAT_SLOTS[i]}`}>
+          <div
+            key={i}
+            className={`hero-float hero-float-${FLOAT_SLOTS[i].key} ${FLOAT_SLOTS[i].className}`}
+          >
             {chip}
           </div>
         ))}
@@ -247,8 +299,9 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         </h1>
 
         <p className="hero-rise mt-6 max-w-xl text-body-lg text-mint/85">
-          We stress-test the AI tools everyone&apos;s arguing about, score them
-          0&ndash;10, and unlock the best honest price on the one you pick.
+          We research the AI tools everyone&apos;s arguing about against their
+          official docs and pricing, score them 0&ndash;10, and point you at the
+          best honest price on the one you pick.
         </p>
 
         {/* Command-style search */}

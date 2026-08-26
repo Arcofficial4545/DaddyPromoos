@@ -8,8 +8,11 @@ const trustPoints = [
     text: "Research-based editorial reviews",
   },
   {
+    // Was "Every offer verified by a human" — nothing in the pipeline records a
+    // human verification event, so the claim was unsupportable. State what is
+    // actually true: offers route to the brand's own official page.
     icon: BadgeCheck,
-    text: "Every offer verified by a human",
+    text: "Every offer links to the brand's official page",
   },
   {
     icon: ShieldCheck,

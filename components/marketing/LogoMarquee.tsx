@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
+import { cn } from "@/lib/utils";
 
 export type LogoMarqueeItem = { name: string; logoUrl: string | null };
 
@@ -8,22 +9,24 @@ export type LogoMarqueeItem = { name: string; logoUrl: string | null };
  * with a hairline border; opacity lifts on hover, the whole track pauses on
  * hover, and it holds a static row under `prefers-reduced-motion` (both via the
  * shared `.marquee-track` rules in globals.css). Alt text is the brand name.
+ *
+ * A brand with no `logoUrl` falls back to its name set as a wordmark. This used
+ * to filter those rows out, which made a missing asset invisible — the tool
+ * just vanished from the strip with no image request to notice in devtools.
  */
 export function LogoMarquee({
   logos,
-  caption = "TOOLS WE'VE TESTED",
+  caption = "TOOLS WE COVER",
 }: {
   logos: LogoMarqueeItem[];
   caption?: string;
 }) {
-  const items = logos.filter(
-    (l): l is { name: string; logoUrl: string } => !!l.logoUrl,
-  );
+  const items = logos;
   if (items.length === 0) return null;
 
   return (
     <section
-      aria-label="Tools we've tested"
+      aria-label="Tools we cover"
       className="overflow-hidden border-y border-line bg-white py-8"
     >
       <Container size="wide">
@@ -44,16 +47,25 @@ export function LogoMarquee({
             {items.map((logo, i) => (
               <span
                 key={`${copy}-${i}`}
-                className="mx-4 inline-flex h-14 w-16 items-center justify-center opacity-70 transition-opacity hover:opacity-100"
+                className={cn(
+                  "mx-4 inline-flex h-14 items-center justify-center opacity-70 transition-opacity hover:opacity-100",
+                  logo.logoUrl ? "w-16" : "px-1",
+                )}
               >
-                <Image
-                  src={logo.logoUrl}
-                  alt={logo.name}
-                  width={44}
-                  height={26}
-                  unoptimized={/\.(svg|ico)$/i.test(logo.logoUrl)}
-                  className="max-h-[26px] w-auto object-contain"
-                />
+                {logo.logoUrl ? (
+                  <Image
+                    src={logo.logoUrl}
+                    alt={logo.name}
+                    width={44}
+                    height={26}
+                    unoptimized={/\.(svg|ico)$/i.test(logo.logoUrl)}
+                    className="max-h-[26px] w-auto object-contain"
+                  />
+                ) : (
+                  <span className="font-display text-sm font-semibold whitespace-nowrap text-ink">
+                    {logo.name}
+                  </span>
+                )}
               </span>
             ))}
           </div>

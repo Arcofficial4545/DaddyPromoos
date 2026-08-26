@@ -12,6 +12,7 @@
 import { randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 // tsx doesn't load Next's env files; pick up .env.local ourselves.
 try {
@@ -38,6 +39,7 @@ import {
   storeCategories,
   stores,
   type ComparisonCriterion,
+  type NewPromo,
   type FaqItem,
   type PricingRow,
   type RatingCriterion,
@@ -1506,7 +1508,7 @@ type ComparisonSeed = {
   seoDescription: string;
 };
 
-const comparisonSeed: ComparisonSeed[] = [
+export const comparisonSeed: ComparisonSeed[] = [
   {
     slug: "base44-vs-lovable",
     title: "Base44 vs Lovable",
@@ -1825,142 +1827,37 @@ const comparisonSeed: ComparisonSeed[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Main                                                                */
+/* Content builders                                                    */
+/*                                                                     */
+/* Extracted from main() so scripts/restore-content.ts can reuse the   */
+/* exact same content arrays without importing a module that wipes the */
+/* database. The array literals below are unchanged.                   */
 /* ------------------------------------------------------------------ */
 
-async function main() {
-  console.log("Wiping existing data...");
-  await wipe();
+/** Coupon rows are only ever read for their id when embedded in content. */
+type OfferRef = { id: string };
 
-  console.log("Seeding categories...");
-  const catRows = await db.insert(categories).values(categorySeed).returning();
-  const catBySlug = new Map(catRows.map((c) => [c.slug, c]));
+export type ContentOffers = {
+  base44Offer: OfferRef;
+  lovableOffer: OfferRef;
+  sageOffer: OfferRef;
+  shopifyOffer: OfferRef;
+  canvaOffer: OfferRef;
+  framerOffer: OfferRef;
+};
 
-  console.log("Seeding stores...");
-  const storeRows = await db
-    .insert(stores)
-    .values(
-      storeSeed.map((s) => ({
-        name: s.name,
-        slug: s.slug,
-        tagline: s.tagline,
-        description: s.description,
-        websiteUrl: s.websiteUrl,
-        // Placeholder until real partner URLs are added through admin.
-        affiliateBaseUrl: s.websiteUrl,
-        rating: s.rating,
-        isFeatured: s.isFeatured ?? false,
-        isActive: true,
-        isFictional: s.isFictional ?? false,
-        seoTitle: `${s.name} Review, Deals, and Pricing`,
-        seoDescription: `Honest editorial review of ${s.name} plus current verified offers. ${s.tagline}`,
-        heroSummary: s.heroSummary ?? null,
-        verdict: s.verdict ?? null,
-        editorialScore: s.editorialScore ?? null,
-        useItFor: s.useItFor ?? null,
-        skipItIf: s.skipItIf ?? null,
-        goodPoints: s.goodPoints ?? null,
-        weakPoints: s.weakPoints ?? null,
-        pricingSummary: s.pricingSummary ?? null,
-        pricingUrl: s.pricingUrl ?? null,
-        howToRedeem: s.howToRedeem ?? null,
-        faq: s.faq ?? null,
-        alternativeSlugs: s.alternativeSlugs ?? null,
-        lastReviewedAt: s.editorialScore ? REVIEWED_AT : null,
-        ratingBreakdown: reviewExtras[s.slug]?.ratingBreakdown ?? null,
-        reviewBody: reviewExtras[s.slug]?.reviewBody ?? null,
-        startingPriceLabel: reviewExtras[s.slug]?.startingPriceLabel ?? null,
-        screenshots: null,
-        // Pick up assets already fetched by `npm run assets:fetch`.
-        logoUrl: diskAsset("logos", s.slug, LOGO_EXTS),
-        coverImageUrl: diskAsset("covers", s.slug, COVER_EXTS),
-      })),
-    )
-    .returning();
-  const storeBySlug = new Map(storeRows.map((s) => [s.slug, s]));
-
-  await db.insert(storeCategories).values(
-    storeSeed.flatMap((s) =>
-      s.cats.map((catSlug) => ({
-        storeId: storeBySlug.get(s.slug)!.id,
-        categoryId: catBySlug.get(catSlug)!.id,
-      })),
-    ),
-  );
-
-  console.log("Seeding coupons (honest offers + community codes)...");
-  const couponRows = await db
-    .insert(coupons)
-    .values(
-      couponSeed.map((c) => ({
-        storeId: storeBySlug.get(c.store)!.id,
-        title: c.title,
-        code: c.code ?? null,
-        type: c.type,
-        sourceType: c.sourceType ?? "official",
-        discountLabel: c.discountLabel,
-        discountValue: null,
-        terms: c.terms,
-        destinationUrl: c.destinationUrl ?? null,
-        startsAt: days(-30),
-        expiresAt: c.expiresInDays !== undefined ? days(c.expiresInDays) : null,
-        isVerified: c.isVerified ?? false,
-        isExclusive: false,
-        isActive: true,
-        lastVerifiedAt: c.isVerified ? days(-2) : null,
-        // Real numbers only: all usage counters start at zero.
-        clickCount: 0,
-        revealCount: 0,
-        successReports: 0,
-        worksCount: 0,
-        failsCount: 0,
-        sortWeight: c.sortWeight ?? 0,
-      })),
-    )
-    .returning();
-
-  const couponByTitle = new Map(couponRows.map((c) => [c.title, c]));
-  const pick = (title: string) => {
-    const c = couponByTitle.get(title);
-    if (!c) throw new Error(`Seed coupon not found: ${title}`);
-    return c;
-  };
-
-  const base44Offer = pick("Free plan — build and publish without a card");
-  const lovableOffer = pick("Free tier — daily messages, real code output");
-  const sageOffer = pick("Current new-customer offer on Sage Accounting");
-  const shopifyOffer = pick("Shopify's standing new-merchant intro offer");
-  const canvaOffer = pick("Canva Pro free trial for new users");
-  const framerOffer = pick("Publish free on a framer.website subdomain");
-
-  console.log("Seeding authors + posts...");
-  const authorRows = await db
-    .insert(authors)
-    .values([
-      {
-        name: "Abdul Rehman Ch",
-        bio: "Founder and CEO of DaddyPromoos. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
-        role: "Founder & CEO",
-      },
-      {
-        name: "Maya Whitfield",
-        bio: "Senior Editor at DaddyPromoos. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
-        role: "Senior Editor",
-      },
-      {
-        name: "Haw",
-        bio: "Editor at DaddyPromoos. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
-        role: "Editor",
-      },
-    ])
-    .returning();
-  const [abdul] = authorRows;
-  // The methodology/trust piece is bylined to the founder; everything else
-  // rotates across the editorial team so posts read as a real newsroom.
-  const authorIdForPost = (slug: string, i: number): string =>
-    slug === "how-we-score-every-tool"
-      ? abdul.id
-      : authorRows[i % authorRows.length].id;
+export function buildPostSeed<C extends { id: string }>(
+  deps: ContentOffers & { catBySlug: Map<string, C> },
+) {
+  const {
+    catBySlug,
+    base44Offer,
+    lovableOffer,
+    sageOffer,
+    shopifyOffer,
+    canvaOffer,
+    framerOffer,
+  } = deps;
 
   const postSeed = [
     {
@@ -2682,39 +2579,16 @@ async function main() {
     },
   ];
 
-  const postRows = await db
-    .insert(posts)
-    .values(
-      postSeed.map((post, i) => ({
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        contentJson: post.content,
-        authorId: authorIdForPost(post.slug, i),
-        categoryId: post.categoryId,
-        tags: post.tags,
-        status: "published" as const,
-        publishedAt: post.publishedAt,
-        readingMinutes: post.readingMinutes,
-        viewCount: 0, // real numbers only
-        seoTitle: post.title,
-        seoDescription: post.excerpt,
-      })),
-    )
-    .returning();
+  return postSeed;
+}
 
-  const postBySlug = new Map(postRows.map((p) => [p.slug, p]));
-  await db.insert(postStores).values(
-    postSeed.flatMap((post) =>
-      post.relatedStores.map((slug) => ({
-        postId: postBySlug.get(post.slug)!.id,
-        storeId: storeBySlug.get(slug)!.id,
-      })),
-    ),
-  );
+export function buildPromoSeed(
+  deps: Omit<ContentOffers, "framerOffer">,
+): NewPromo[] {
+  const { base44Offer, lovableOffer, sageOffer, shopifyOffer, canvaOffer } =
+    deps;
 
-  console.log("Seeding promos...");
-  await db.insert(promos).values([
+  return [
     {
       name: "Sidebar: Base44 free plan",
       placement: "sidebar",
@@ -2778,7 +2652,212 @@ async function main() {
       isActive: true,
       priority: 10,
     },
-  ]);
+  ];
+}
+
+/* ------------------------------------------------------------------ */
+/* Main                                                                */
+/* ------------------------------------------------------------------ */
+
+async function main() {
+  console.log("Wiping existing data...");
+  await wipe();
+
+  console.log("Seeding categories...");
+  const catRows = await db.insert(categories).values(categorySeed).returning();
+  const catBySlug = new Map(catRows.map((c) => [c.slug, c]));
+
+  console.log("Seeding stores...");
+  const storeRows = await db
+    .insert(stores)
+    .values(
+      storeSeed.map((s) => ({
+        name: s.name,
+        slug: s.slug,
+        tagline: s.tagline,
+        description: s.description,
+        websiteUrl: s.websiteUrl,
+        // Placeholder until real partner URLs are added through admin.
+        affiliateBaseUrl: s.websiteUrl,
+        rating: s.rating,
+        isFeatured: s.isFeatured ?? false,
+        isActive: true,
+        isFictional: s.isFictional ?? false,
+        seoTitle: `${s.name} Review, Deals, and Pricing`,
+        seoDescription: `Honest editorial review of ${s.name} plus current verified offers. ${s.tagline}`,
+        heroSummary: s.heroSummary ?? null,
+        verdict: s.verdict ?? null,
+        editorialScore: s.editorialScore ?? null,
+        useItFor: s.useItFor ?? null,
+        skipItIf: s.skipItIf ?? null,
+        goodPoints: s.goodPoints ?? null,
+        weakPoints: s.weakPoints ?? null,
+        pricingSummary: s.pricingSummary ?? null,
+        pricingUrl: s.pricingUrl ?? null,
+        howToRedeem: s.howToRedeem ?? null,
+        faq: s.faq ?? null,
+        alternativeSlugs: s.alternativeSlugs ?? null,
+        lastReviewedAt: s.editorialScore ? REVIEWED_AT : null,
+        ratingBreakdown: reviewExtras[s.slug]?.ratingBreakdown ?? null,
+        reviewBody: reviewExtras[s.slug]?.reviewBody ?? null,
+        startingPriceLabel: reviewExtras[s.slug]?.startingPriceLabel ?? null,
+        screenshots: null,
+        // Pick up assets already fetched by `npm run assets:fetch`.
+        logoUrl: diskAsset("logos", s.slug, LOGO_EXTS),
+        coverImageUrl: diskAsset("covers", s.slug, COVER_EXTS),
+      })),
+    )
+    .returning();
+  const storeBySlug = new Map(storeRows.map((s) => [s.slug, s]));
+
+  await db.insert(storeCategories).values(
+    storeSeed.flatMap((s) =>
+      s.cats.map((catSlug) => ({
+        storeId: storeBySlug.get(s.slug)!.id,
+        categoryId: catBySlug.get(catSlug)!.id,
+      })),
+    ),
+  );
+
+  console.log("Seeding coupons (honest offers + community codes)...");
+  const couponRows = await db
+    .insert(coupons)
+    .values(
+      couponSeed.map((c) => ({
+        storeId: storeBySlug.get(c.store)!.id,
+        title: c.title,
+        code: c.code ?? null,
+        type: c.type,
+        sourceType: c.sourceType ?? "official",
+        discountLabel: c.discountLabel,
+        discountValue: null,
+        terms: c.terms,
+        destinationUrl: c.destinationUrl ?? null,
+        startsAt: days(-30),
+        expiresAt: c.expiresInDays !== undefined ? days(c.expiresInDays) : null,
+        isVerified: c.isVerified ?? false,
+        isExclusive: false,
+        isActive: true,
+        lastVerifiedAt: c.isVerified ? days(-2) : null,
+        // Real numbers only: all usage counters start at zero.
+        clickCount: 0,
+        revealCount: 0,
+        successReports: 0,
+        worksCount: 0,
+        failsCount: 0,
+        sortWeight: c.sortWeight ?? 0,
+      })),
+    )
+    .returning();
+
+  const couponByTitle = new Map(couponRows.map((c) => [c.title, c]));
+  const pick = (title: string) => {
+    const c = couponByTitle.get(title);
+    if (!c) throw new Error(`Seed coupon not found: ${title}`);
+    return c;
+  };
+
+  const base44Offer = pick("Free plan — build and publish without a card");
+  const lovableOffer = pick("Free tier — daily messages, real code output");
+  const sageOffer = pick("Current new-customer offer on Sage Accounting");
+  const shopifyOffer = pick("Shopify's standing new-merchant intro offer");
+  const canvaOffer = pick("Canva Pro free trial for new users");
+  const framerOffer = pick("Publish free on a framer.website subdomain");
+
+  console.log("Seeding authors + posts...");
+  const authorRows = await db
+    .insert(authors)
+    .values([
+      {
+        name: "Abdul Rehman Ch",
+        bio: "Founder and CEO of DaddyPromoos. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
+        role: "Founder & CEO",
+      },
+      {
+        name: "Maya Whitfield",
+        bio: "Senior Editor at DaddyPromoos. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
+        role: "Senior Editor",
+      },
+      {
+        name: "Haw",
+        bio: "Editor at DaddyPromoos. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
+        role: "Editor",
+      },
+    ])
+    .returning();
+  const [abdul] = authorRows;
+  // The methodology/trust piece is bylined to the founder; everything else
+  // rotates across the editorial team so posts read as a real newsroom.
+  const authorIdForPost = (slug: string, i: number): string =>
+    slug === "how-we-score-every-tool"
+      ? abdul.id
+      : authorRows[i % authorRows.length].id;
+
+  const postSeed = buildPostSeed({
+    catBySlug,
+    base44Offer,
+    lovableOffer,
+    sageOffer,
+    shopifyOffer,
+    canvaOffer,
+    framerOffer,
+  });
+
+  // Guard: every post must resolve to an author row that actually exists.
+  // Here the authors were just inserted, so this fires only if that insert
+  // changes shape; scripts/restore-content.ts runs the same check against
+  // rows already in the database, where a missing byline is a real risk.
+  const seedAuthorIds = new Set(authorRows.map((a) => a.id));
+  for (const [i, post] of postSeed.entries()) {
+    const resolved = authorIdForPost(post.slug, i);
+    if (!resolved || !seedAuthorIds.has(resolved)) {
+      throw new Error(
+        `No author row for post "${post.slug}" (resolved: ${resolved ?? "undefined"})`,
+      );
+    }
+  }
+
+  const postRows = await db
+    .insert(posts)
+    .values(
+      postSeed.map((post, i) => ({
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        contentJson: post.content,
+        authorId: authorIdForPost(post.slug, i),
+        categoryId: post.categoryId,
+        tags: post.tags,
+        status: "published" as const,
+        publishedAt: post.publishedAt,
+        readingMinutes: post.readingMinutes,
+        viewCount: 0, // real numbers only
+        seoTitle: post.title,
+        seoDescription: post.excerpt,
+      })),
+    )
+    .returning();
+
+  const postBySlug = new Map(postRows.map((p) => [p.slug, p]));
+  await db.insert(postStores).values(
+    postSeed.flatMap((post) =>
+      post.relatedStores.map((slug) => ({
+        postId: postBySlug.get(post.slug)!.id,
+        storeId: storeBySlug.get(slug)!.id,
+      })),
+    ),
+  );
+
+  console.log("Seeding promos...");
+  await db.insert(promos).values(
+    buildPromoSeed({
+      base44Offer,
+      lovableOffer,
+      sageOffer,
+      shopifyOffer,
+      canvaOffer,
+    }),
+  );
 
   console.log("Seeding comparisons...");
   const comparisonRows = await db
@@ -2838,9 +2917,14 @@ async function main() {
   console.log("");
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+// Only wipe-and-seed when this file is run directly. Importing it (as
+// scripts/restore-content.ts does, to reuse the content arrays) must never
+// trigger the destructive main().
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
+}

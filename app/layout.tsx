@@ -20,6 +20,18 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+/**
+ * Impact.com site verification. Spread as a props object rather than written
+ * as `<meta value="...">` because Impact's snippet uses a `value` attribute,
+ * which isn't part of React's `meta` prop types — and the Metadata API's
+ * `verification.other` would emit `content="..."` instead, which is not the
+ * tag Impact asks for. Must stay in the <head> of the homepage.
+ */
+const IMPACT_SITE_VERIFICATION = {
+  name: "impact-site-verification",
+  value: "8c458551-17b6-435c-a021-48cee8e6a1e9",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
@@ -43,6 +55,9 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <meta {...IMPACT_SITE_VERIFICATION} />
+      </head>
       {/* suppressHydrationWarning: browser extensions commonly inject
           attributes onto <html>/<body> before hydration; this silences the
           resulting attribute-only mismatch without affecting real content. */}

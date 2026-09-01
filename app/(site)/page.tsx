@@ -32,6 +32,15 @@ import { listPublishedPosts } from "@/lib/db/repositories/posts";
 import { listReviewedStores } from "@/lib/db/repositories/stores";
 import { formatDate } from "@/lib/utils";
 
+/**
+ * Rendered on demand rather than prerendered. Build-time static generation of
+ * this route exhausted all three 300s attempts and failed the deployment: the
+ * seven-query fan-out below starves the Supabase transaction pooler, and
+ * postgres.js has no query timeout, so a starved query hangs indefinitely.
+ * `getHomeData`'s `"use cache"` still absorbs the round trips at runtime.
+ */
+export const dynamic = "force-dynamic";
+
 /** Everything the homepage reads from the DB, already narrowed to what the
  * components render. Marked `"use cache"` so the fan-out below runs once per
  * revalidate window rather than once per render — ISR only covers the built

@@ -18,6 +18,14 @@ import { breadcrumbLd, ogImageUrl } from "@/lib/seo/jsonld";
 
 const PAGE_SIZE = 20;
 
+/**
+ * Rendered on demand rather than prerendered. Build-time static generation of
+ * this route repeatedly exhausted the Supabase transaction pooler and hung past
+ * the 300s page timeout, failing the whole deployment. Rendering on request
+ * costs one round trip per visit and cannot block a build.
+ */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "All Deals — Offers on AI Tools and SaaS",
   description:

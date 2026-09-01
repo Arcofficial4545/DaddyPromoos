@@ -29,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
  */
 const IMPACT_SITE_VERIFICATION = {
   name: "impact-site-verification",
-  value: "ce8f4f99-1a78-4057-928a-493ddf990c22",
+  value: "f9503c91-29f7-4526-854c-2217771e8d7c",
 };
 
 export const metadata: Metadata = {

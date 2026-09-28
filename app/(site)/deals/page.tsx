@@ -27,13 +27,13 @@ const PAGE_SIZE = 20;
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "All Deals — Offers on AI Tools and SaaS",
+  title: "Official Offers — Free Plans, Trials, and Discounts",
   description:
-    "Every active deal and code on DaddyPromoos, checked by our editors. Filter by category, sort by newest or expiring soon.",
+    "Free plans, trials, and official discounts from the tools we review — each links to the brand's own page. Filter by category or sort by newest.",
   alternates: { canonical: "/deals" },
   openGraph: {
-    title: "All Deals | DaddyPromoos",
-    images: [ogImageUrl("All deals", "Every active offer, verified")],
+    title: "Official Offers | DaddyPromoos",
+    images: [ogImageUrl("Official offers", "Free plans, trials, and discounts")],
   },
 };
 
@@ -77,19 +77,19 @@ export default async function CouponsPage({
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", href: "/" },
-          { name: "Deals", href: "/deals" },
+          { name: "Offers", href: "/deals" },
         ])}
       />
       <PageHeader
-        title="Today's deals"
-        description={`${total} active ${total === 1 ? "deal" : "deals"} across every store we cover. Codes are checked before they're listed.`}
+        title="Official offers"
+        description={`${total} active ${total === 1 ? "offer" : "offers"} from the tools we review — free plans, trials, and discounts, each linked to the brand's own page.`}
       />
       <Section padding="tight">
         <Container size="wide">
           <DisclosureLine className="mb-6" />
           <Suspense>
             <FilterBar
-              searchPlaceholder="Search coupons and stores"
+              searchPlaceholder="Search offers and tools"
               selects={[
                 {
                   param: "category",
@@ -105,9 +105,9 @@ export default async function CouponsPage({
                   label: "Type",
                   emptyValue: "all",
                   options: [
-                    { value: "all", label: "Codes and deals" },
+                    { value: "all", label: "All offers" },
                     { value: "code", label: "Codes only" },
-                    { value: "deal", label: "Deals only" },
+                    { value: "deal", label: "Offers without a code" },
                   ],
                 },
                 {
@@ -127,7 +127,7 @@ export default async function CouponsPage({
 
           {coupons.length === 0 ? (
             <p className="mt-12 text-center text-ink-muted">
-              No coupons match those filters. Try widening the search.
+              No offers match those filters. Try widening the search.
             </p>
           ) : (
             <CouponGrid

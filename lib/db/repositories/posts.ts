@@ -97,6 +97,22 @@ export async function getPublishedPostBySlug(
   return post;
 }
 
+/** Published posts by slug, in the order asked for. Unknown or unpublished
+ * slugs are skipped, so a hand-picked guide list never links to a 404. */
+export async function listPublishedPostsBySlugs(
+  slugs: string[],
+): Promise<PostWithMeta[]> {
+  if (slugs.length === 0) return [];
+  const rows = await db
+    .select()
+    .from(posts)
+    .where(and(inArray(posts.slug, slugs), isPublished()));
+  const bySlug = new Map((await withMeta(rows)).map((p) => [p.slug, p]));
+  return slugs
+    .map((slug) => bySlug.get(slug))
+    .filter((p): p is PostWithMeta => p !== undefined);
+}
+
 export async function listAllPublishedPostSlugs(): Promise<string[]> {
   const rows = await db
     .select({ slug: posts.slug })

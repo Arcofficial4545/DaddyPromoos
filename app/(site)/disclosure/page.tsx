@@ -18,19 +18,19 @@ export default function DisclosurePage() {
         <Container size="narrow">
           <div className="space-y-5 text-body-lg leading-relaxed text-ink-muted">
             <p>
-              When you click through to a store from DaddyPromoos and make a
-              purchase, we may earn a commission from that store. This costs
-              you nothing — prices and discounts are identical whether you
-              arrive through our links or not.
+              When you click through to a tool from DaddyPromoos and sign up
+              or buy, we may earn a commission from that company. This costs
+              you nothing — prices are identical whether you arrive through our
+              links or not.
             </p>
             <p>
-              These commissions are how we fund the work: testing codes,
-              writing reviews, and keeping the deal feed current. Not every
-              link earns us anything, and we list plenty of offers from stores
-              we have no relationship with, because a good deal is a good deal.
+              These commissions are how we fund the work: researching and
+              writing reviews, comparisons, and guides. Not every link earns us
+              anything, and we cover plenty of tools we have no relationship
+              with, because the right tool is the right tool.
             </p>
             <p>
-              What this never changes: our coverage. Stores cannot pay for a
+              What this never changes: our coverage. Companies cannot pay for a
               review, a rating, a ranking, or a place on the site. If a
               product is not worth your money, we say so — commission or not.
             </p>
@@ -41,7 +41,7 @@ export default function DisclosurePage() {
               </a>
               , or read about{" "}
               <a href="/how-we-review" className="font-medium text-pine underline decoration-emerald underline-offset-4 hover:text-emerald-600">
-                how we verify offers and write reviews
+                how we research and score tools
               </a>
               .
             </p>

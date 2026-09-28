@@ -5,8 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { StoreLogo } from "@/components/coupon/StoreLogo";
-import { CouponTicket } from "@/components/coupon/CouponTicket";
-import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
+import { StartOptions } from "@/components/marketing/company/StartOptions";
 import { ComparisonTable } from "@/components/marketing/company/ComparisonTable";
 import { ScoreCard } from "@/components/marketing/company/ScoreCard";
 import { DisclosureLine } from "@/components/marketing/DisclosureLine";
@@ -155,13 +154,13 @@ export default async function ComparisonPage({
               score={storeA.editorialScore}
               toolName={storeA.name}
               goHref={goA}
-              hideDealsCta
+              hideStartCta
             />
             <ScoreCard
               score={storeB.editorialScore}
               toolName={storeB.name}
               goHref={goB}
-              hideDealsCta
+              hideStartCta
             />
           </div>
           <DisclosureLine className="mt-4 text-center text-xs" />
@@ -208,7 +207,7 @@ export default async function ComparisonPage({
             </div>
           </section>
 
-          {/* Cross-links + compact deals */}
+          {/* Cross-links + each tool's official offers */}
           <section className="grid gap-8 sm:grid-cols-2">
             <ToolColumn
               store={storeA}
@@ -334,17 +333,7 @@ function ToolColumn({
           />
         </Link>
       </div>
-      {coupons.length > 0 && (
-        <div className="mt-4 space-y-3">
-          {coupons.map((coupon) => (
-            <CouponTicket
-              key={coupon.id}
-              coupon={toTicketCoupon(coupon)}
-              hideStore
-            />
-          ))}
-        </div>
-      )}
+      <StartOptions offers={coupons} className="mt-4" />
     </div>
   );
 }

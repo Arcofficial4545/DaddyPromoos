@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { CouponGrid } from "@/components/coupon/CouponGrid";
-import type { TicketCoupon } from "@/components/coupon/CouponTicket";
-import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { CategoryIcon } from "@/components/marketing/CategoryIcon";
 import { Hero } from "@/components/marketing/hero/Hero";
 import { LogoMarquee } from "@/components/marketing/LogoMarquee";
@@ -20,17 +17,26 @@ import {
   RotatingReviews,
   type ReviewItem,
 } from "@/components/marketing/home/RotatingReviews";
+import { TopPick, type TopPickData } from "@/components/marketing/home/TopPick";
 import { Reveal } from "@/components/motion/Reveal";
-import { PromoSlot } from "@/components/promo/PromoSlot";
 import { listPublishedComparisons } from "@/lib/db/repositories/comparisons";
 import { listCategories } from "@/lib/db/repositories/categories";
+import { listCouponsForStore } from "@/lib/db/repositories/coupons";
 import {
-  countActiveCoupons,
-  listActiveCoupons,
-} from "@/lib/db/repositories/coupons";
-import { listPublishedPosts } from "@/lib/db/repositories/posts";
+  listPublishedPosts,
+  listPublishedPostsBySlugs,
+} from "@/lib/db/repositories/posts";
 import { listReviewedStores } from "@/lib/db/repositories/stores";
 import { formatDate } from "@/lib/utils";
+
+/** Our top pick for founders who don't write code, and the published guides
+ * that take a reader from choosing it to launching with it. Missing or
+ * unpublished guides are skipped. */
+const TOP_PICK_SLUG = "lovable";
+const TOP_PICK_GUIDE_SLUGS = [
+  "lovable-pricing-and-credits-explained",
+  "shipping-your-first-app-with-lovable",
+];
 
 /**
  * Rendered on demand rather than prerendered. Build-time static generation of
@@ -61,20 +67,58 @@ async function getHomeData() {
   cacheLife({ stale: 60, revalidate: 3600, expire: 86_400 });
 
   const [
-    { coupons: featuredCoupons },
-    couponCount,
-    categories,
+    allCategories,
     { posts: latestPosts },
     reviewedStores,
     comparisons,
+    pickGuides,
   ] = await Promise.all([
-    listActiveCoupons({ sort: "featured", limit: 4 }),
-    countActiveCoupons(),
     listCategories(),
     listPublishedPosts({ limit: 2 }),
     listReviewedStores(),
     listPublishedComparisons(),
+    listPublishedPostsBySlugs(TOP_PICK_GUIDE_SLUGS),
   ]);
+
+  // A category whose tools were all deactivated would render as "0 tools".
+  const categories = allCategories.filter((c) => c.storeCount > 0);
+
+  // "Where to start" band. Its CTA goes through the tracked /go redirect for
+  // the pick's lead offer (its free plan), like the review page's CTA does.
+  const pickStore = reviewedStores.find((s) => s.slug === TOP_PICK_SLUG);
+  let topPick: TopPickData | null = null;
+  if (pickStore) {
+    const { active } = await listCouponsForStore(pickStore.id);
+    topPick = {
+      name: pickStore.name,
+      slug: pickStore.slug,
+      logoUrl: pickStore.logoUrl,
+      themeColor: pickStore.themeColor,
+      score: pickStore.editorialScore,
+      verdict: pickStore.verdict,
+      goHref: active[0]
+        ? `/go/${active[0].id}`
+        : (pickStore.affiliateBaseUrl ?? pickStore.websiteUrl),
+      ctaLabel: `Try ${pickStore.name} free`,
+      guides: [
+        {
+          title: "Build your first app with AI — our step-by-step guide",
+          href: "/build-with-ai",
+        },
+        {
+          title: `${pickStore.name} review: score, pricing, pros and cons`,
+          href: `/tools/${pickStore.slug}`,
+        },
+        ...pickGuides.map((p) => ({ title: p.title, href: `/blog/${p.slug}` })),
+      ],
+      comparisons: comparisons
+        .filter(
+          (c) =>
+            c.storeA.slug === TOP_PICK_SLUG || c.storeB.slug === TOP_PICK_SLUG,
+        )
+        .map((c) => ({ title: c.title, href: `/compare/${c.slug}` })),
+    };
+  }
 
   // Slim data pools handed to the client components, which pick their random
   // selection on mount (keeps the page cacheable and the payload small).
@@ -121,6 +165,7 @@ async function getHomeData() {
 
   // Quick tags stay deterministic (a fast path in, no need to rotate).
   const quickTags = [
+    { label: "Build your first app", href: "/build-with-ai" },
     ...(comparisons[0]
       ? [
           {
@@ -135,8 +180,7 @@ async function getHomeData() {
   ];
 
   return {
-    featuredCoupons: featuredCoupons.map(toTicketCoupon) as TicketCoupon[],
-    couponCount,
+    topPick,
     categories,
     // Drop `contentJson` and friends — the cards render only these fields, and
     // the full Tiptap body would otherwise be serialized into the cache entry.
@@ -198,8 +242,7 @@ function SectionHead({
 
 export default async function HomePage() {
   const {
-    featuredCoupons,
-    couponCount,
+    topPick,
     categories,
     posts: latestPosts,
     reviewItems,
@@ -216,7 +259,6 @@ export default async function HomePage() {
       <Hero
         toolsReviewed={toolsReviewed}
         comparisonsCount={comparisonsCount}
-        dealsCount={couponCount}
         cards={heroCards}
         vsChips={heroVsChips}
         quickTags={quickTags}
@@ -229,9 +271,8 @@ export default async function HomePage() {
         }))}
       />
 
-      <Container size="wide" className="mt-10">
-        <PromoSlot placement="home-banner" path="/" />
-      </Container>
+      {/* ================================== Where to start (top pick, mint) */}
+      {topPick && <TopPick pick={topPick} />}
 
       {/* ============================================= Latest reviews (rows) */}
       {reviewItems.length > 0 && (
@@ -260,7 +301,7 @@ export default async function HomePage() {
           <Reveal>
             <SectionHead
               kicker="Categories"
-              title="Browse by what you're shopping for"
+              title="Browse by what you're building"
             />
           </Reveal>
           <ul className="mt-8 divide-y divide-line border-y border-line">
@@ -293,22 +334,6 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
-        </Container>
-      </Section>
-
-      {/* ============================================= Deals strip (secondary) */}
-      <Section tone="mint" padding="tight">
-        <Container size="wide">
-          <SectionHead
-            kicker="Deals"
-            title="A few worth grabbing"
-            href="/deals"
-            linkLabel="All deals"
-          />
-          <CouponGrid
-            coupons={featuredCoupons}
-            className="mt-6"
-          />
         </Container>
       </Section>
 
@@ -363,11 +388,11 @@ export default async function HomePage() {
         <Container className="flex flex-col items-center text-center">
           <Reveal>
             <h2 className="max-w-xl font-display text-3xl font-bold text-white">
-              The tools worth your money
+              Build with the right tools
             </h2>
             <p className="mx-auto mt-3 max-w-md text-mint/85">
-              One email a week — the latest reviews, comparisons, and deals
-              worth knowing about. No noise, unsubscribe anytime.
+              One email a week — new reviews, head-to-head comparisons, and
+              build guides. No noise, unsubscribe anytime.
             </p>
             <div className="mt-7 flex justify-center">
               <NewsletterForm source="home-band" />

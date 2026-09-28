@@ -8,20 +8,20 @@ const columns = [
   {
     heading: "Explore",
     links: [
+      { href: "/build-with-ai", label: "Build with AI" },
       { href: "/reviews", label: "Reviews" },
       { href: "/compare", label: "Compare" },
       { href: "/tools", label: "Tools" },
-      { href: "/deals", label: "Deals" },
       { href: "/blog", label: "Blog" },
     ],
   },
   {
     heading: "Categories",
     links: [
+      { href: "/categories/no-code-app-builders", label: "AI App Builders" },
+      { href: "/categories/ai-ides-coding-agents", label: "AI Coding Tools" },
       { href: "/categories/ai-tools", label: "AI Tools" },
-      { href: "/categories/no-code-app-builders", label: "No-Code Builders" },
-      { href: "/categories/saas", label: "SaaS" },
-      { href: "/categories/accounting-finance", label: "Accounting" },
+      { href: "/categories/productivity", label: "Productivity" },
     ],
   },
   {
@@ -101,10 +101,10 @@ export async function Footer() {
 
             <div className="mt-8">
               <p className="text-sm font-semibold text-white">
-                Get the best deals in your inbox
+                New reviews in your inbox
               </p>
               <p className="mt-1 text-xs text-mint/60">
-                One email a week — reviews, comparisons, and verified deals.
+                One email a week — reviews, head-to-heads, and build guides.
               </p>
               <NewsletterForm source="footer" className="mt-3 max-w-sm" />
             </div>

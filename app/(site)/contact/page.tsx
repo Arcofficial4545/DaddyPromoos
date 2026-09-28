@@ -11,20 +11,20 @@ import { Section } from "@/components/ui/Section";
 import { ContactForm } from "@/components/marketing/ContactForm";
 import { PageHeader } from "@/components/marketing/PageHeader";
 
-const CONTACT_EMAIL = "arcoffical1@gmail.com";
+const CONTACT_EMAIL = "info@daddypromoos.com";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Questions, corrections, partnership inquiries, or a dead code to report. Reach the DaddyPromoos team at arcoffical1@gmail.com. We read everything.",
+    "Questions, corrections, or partnership inquiries. Reach the DaddyPromoos team at info@daddypromoos.com. We read everything.",
   alternates: { canonical: "/contact" },
 };
 
 const reasons = [
   {
     icon: MessageSquareWarning,
-    title: "Report a dead code",
-    body: "Found an offer that no longer works? Tell us which one and we will re-check it, usually the same day.",
+    title: "Report something out of date",
+    body: "Spotted a price, plan, or offer that has changed? Tell us which page and we will check it against the vendor's own site.",
   },
   {
     icon: Newspaper,
@@ -43,7 +43,7 @@ export default function ContactPage() {
     <>
       <PageHeader
         title="Get in touch"
-        description="Found a dead code, want us to cover a product, or have a partnership question? We read every message and reply within two business days."
+        description="Spotted something out of date, want us to cover a product, or have a partnership question? We read every message and reply within two business days."
       />
       <Section>
         <Container>

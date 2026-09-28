@@ -36,7 +36,7 @@ export async function GET() {
     <title>${escapeXml(SITE_NAME)} Blog</title>
     <link>${SITE_URL}/blog</link>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
-    <description>Reviews, comparisons, and buying guides for AI tools, SaaS, and digital services.</description>
+    <description>Reviews, comparisons, and build guides for AI app builders and coding tools.</description>
     <language>en</language>
 ${items}
   </channel>

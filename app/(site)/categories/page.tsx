@@ -12,9 +12,9 @@ import { breadcrumbLd, itemListLd, ogImageUrl } from "@/lib/seo/jsonld";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: "Browse Deals by Category",
+  title: "Browse Tools by Category",
   description:
-    "AI tools, no-code builders, SaaS, accounting, e-commerce, design, productivity, and marketing — find verified deals by category.",
+    "AI app builders, AI coding tools, and the software founders use to ship — reviewed, scored, and organized by category.",
   alternates: { canonical: "/categories" },
   openGraph: {
     title: "Categories | DaddyPromoos",
@@ -23,7 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default async function CategoriesPage() {
-  const categories = await listCategories();
+  // Categories with no active tools would render as dead ends.
+  const categories = (await listCategories()).filter((c) => c.storeCount > 0);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function CategoriesPage() {
       />
       <PageHeader
         title="Browse by category"
-        description="Every deal on DaddyPromoos, organized by what you're actually shopping for."
+        description="Every tool we cover, organized by what you're building."
       />
       <Section>
         <Container size="wide">
@@ -66,7 +67,7 @@ export default async function CategoriesPage() {
                 </p>
                 <p className="mt-3 text-xs font-medium text-ink-subtle">
                   {category.storeCount}{" "}
-                  {category.storeCount === 1 ? "store" : "stores"}
+                  {category.storeCount === 1 ? "tool" : "tools"}
                 </p>
               </Card>
             ))}

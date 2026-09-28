@@ -14,7 +14,8 @@ import {
   collectHeadings,
   type TiptapNode,
 } from "@/components/blog/tiptap";
-import { CouponGrid } from "@/components/coupon/CouponGrid";
+import { DisclosureLine } from "@/components/marketing/DisclosureLine";
+import { StartOptions } from "@/components/marketing/company/StartOptions";
 import { PromoSlot } from "@/components/promo/PromoSlot";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -81,7 +82,7 @@ export default async function ArticlePage({
     listRelatedStoreIds(post.id),
   ]);
 
-  // Related deals: active coupons from the stores this article covers.
+  // Official offers from the tools this article covers.
   const relatedDeals =
     relatedStoreIds.length > 0
       ? (await listActiveCoupons({ limit: 40 })).coupons
@@ -167,6 +168,8 @@ export default async function ArticlePage({
             </div>
 
             <article className="mx-auto w-full max-w-2xl min-w-0">
+              {/* Articles can embed offers, so the disclosure leads the body. */}
+              <DisclosureLine className="mb-8 border-b border-line pb-4 text-xs" />
               <ArticleRenderer
                 doc={doc}
                 coupons={couponMap}
@@ -226,17 +229,14 @@ export default async function ArticlePage({
             </div>
           </div>
 
-          {/* ------------------------------------------ Related deals */}
+          {/* ---------------------------------- Offers from covered tools */}
           {relatedDeals.length > 0 && (
-            <div className="mx-auto mt-16 max-w-6xl border-t border-line pt-10">
+            <div className="mx-auto mt-16 max-w-3xl border-t border-line pt-10">
               <h2 className="text-h3 font-bold text-pine">
-                Deals mentioned in this article
+                Official offers from tools in this article
               </h2>
-              <CouponGrid
-                coupons={relatedDeals.map(toTicketCoupon)}
-                className="mt-6"
-                animated={false}
-              />
+              <DisclosureLine className="mt-2" />
+              <StartOptions offers={relatedDeals} showStore className="mt-6" />
             </div>
           )}
         </Container>

@@ -10,10 +10,10 @@ import { Logo } from "@/components/marketing/Logo";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 
 const navLinks = [
+  { href: "/build-with-ai", label: "Build with AI" },
   { href: "/reviews", label: "Reviews" },
   { href: "/compare", label: "Compare" },
   { href: "/tools", label: "Tools" },
-  { href: "/deals", label: "Deals" },
   { href: "/blog", label: "Blog" },
 ];
 

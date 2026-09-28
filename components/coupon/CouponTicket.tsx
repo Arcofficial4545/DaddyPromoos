@@ -340,10 +340,10 @@ export function CouponTicket({
             target="_blank"
             rel="sponsored noopener"
             onClick={handleReveal}
-            aria-label={`Get this deal at ${coupon.store.name}`}
+            aria-label={`View this offer on ${coupon.store.name}'s site`}
             className="btn-gloss btn-primary press-down inline-flex h-10 items-center gap-1.5 rounded-[var(--radius-btn)] px-4 text-xs font-semibold sm:text-sm"
           >
-            Get Deal
+            View offer
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </a>
         )}

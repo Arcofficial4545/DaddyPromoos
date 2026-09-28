@@ -6,8 +6,8 @@ type ScoreCardProps = {
   toolName: string;
   /** Tracked /go destination for the primary CTA. */
   goHref: string;
-  /** When true, hides the "Jump to deals" secondary CTA. */
-  hideDealsCta?: boolean;
+  /** When true, hides the "Ways to start" secondary CTA. */
+  hideStartCta?: boolean;
 };
 
 const R = 52;
@@ -23,7 +23,7 @@ export function ScoreCard({
   score,
   toolName,
   goHref,
-  hideDealsCta,
+  hideStartCta,
 }: ScoreCardProps) {
   const pct = score !== null ? Math.max(0, Math.min(1, score / 10)) : 0;
 
@@ -88,12 +88,12 @@ export function ScoreCard({
         Visit {toolName}
         <ExternalLink className="h-4 w-4" aria-hidden="true" />
       </a>
-      {!hideDealsCta && (
+      {!hideStartCta && (
         <a
-          href="#deals"
+          href="#get-started"
           className="mt-2 flex h-10 w-full items-center justify-center rounded-[var(--radius-btn)] border border-line text-sm font-medium text-ink-muted transition-colors hover:border-emerald-600 hover:text-pine"
         >
-          Jump to deals
+          Ways to start
         </a>
       )}
     </div>

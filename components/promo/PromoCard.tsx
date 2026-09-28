@@ -28,7 +28,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
       >
         <div className={variant === "banner" ? "max-w-md" : ""}>
           <p className="font-display text-lg leading-snug font-bold">
-            {promo.payload.title ?? "The five best deals, every Friday"}
+            {promo.payload.title ?? "New reviews and build guides, every week"}
           </p>
           {promo.payload.body && (
             <p className="mt-2 text-sm leading-relaxed text-mint/80">
@@ -107,7 +107,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
           rel="sponsored noopener"
           className="btn-gloss btn-primary press-down inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-btn)] px-5 text-sm font-semibold"
         >
-          {promo.payload.ctaLabel ?? "Get the deal"}
+          {promo.payload.ctaLabel ?? "See the offer"}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </a>
       </div>
@@ -144,7 +144,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
         rel="sponsored noopener"
         className="btn-gloss btn-primary press-down mt-4 inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[var(--radius-btn)] text-sm font-semibold"
       >
-        {promo.payload.ctaLabel ?? "Get the deal"}
+        {promo.payload.ctaLabel ?? "See the offer"}
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </a>
     </div>

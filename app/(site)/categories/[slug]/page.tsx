@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { CouponGrid } from "@/components/coupon/CouponGrid";
-import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { CategoryIcon } from "@/components/marketing/CategoryIcon";
+import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { PageHeader } from "@/components/marketing/PageHeader";
 import { StoreCard } from "@/components/marketing/StoreCard";
+import { StartOptions } from "@/components/marketing/company/StartOptions";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getCategoryBySlug,
@@ -33,14 +33,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   if (!category) return { title: "Category not found" };
-  const title = `${category.name} Deals and Coupon Codes`;
+  const title = `${category.name}: Reviews, Scores, and Comparisons`;
   return {
     title,
     description: category.description,
     alternates: { canonical: `/categories/${category.slug}` },
     openGraph: {
       title,
-      images: [ogImageUrl(`${category.name} deals`, category.description)],
+      images: [ogImageUrl(category.name, category.description)],
     },
   };
 }
@@ -59,10 +59,9 @@ export default async function CategoryPage({
     listActiveCoupons({ categorySlug: slug, limit: 10 }),
   ]);
 
-  // Show at most one deal per brand in the category grid so no single tool
-  // (e.g. Lovable, which carries several deals) floods the top of the page.
+  // At most one offer per tool so no single brand floods the list.
   const seenStores = new Set<string>();
-  const topDeals = coupons.filter((c) => {
+  const offers = coupons.filter((c) => {
     if (seenStores.has(c.storeId)) return false;
     seenStores.add(c.storeId);
     return true;
@@ -89,23 +88,9 @@ export default async function CategoryPage({
 
       <Section padding="tight">
         <Container size="wide">
-          <h2 className="text-h3 font-bold text-pine">
-            Top {category.name} deals
-          </h2>
-          {topDeals.length === 0 ? (
-            <p className="mt-4 text-ink-muted">
-              No active deals in this category right now — check back soon.
-            </p>
-          ) : (
-            <CouponGrid
-              coupons={topDeals.map(toTicketCoupon)}
-              className="mt-6"
-            />
-          )}
-
-          <div className="mt-14 flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-h3 font-bold text-pine">
-              {category.name} stores
+              {category.name} we&apos;ve reviewed
             </h2>
             <Link
               href={`/tools?category=${category.slug}`}
@@ -116,12 +101,22 @@ export default async function CategoryPage({
             </Link>
           </div>
           {stores.length === 0 ? (
-            <p className="mt-4 text-ink-muted">No stores here yet.</p>
+            <p className="mt-4 text-ink-muted">No tools here yet.</p>
           ) : (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {stores.map((store) => (
                 <StoreCard key={store.id} store={store} />
               ))}
+            </div>
+          )}
+
+          {offers.length > 0 && (
+            <div className="mt-14 max-w-3xl">
+              <h2 className="text-h3 font-bold text-pine">
+                Official offers in {category.name}
+              </h2>
+              <DisclosureLine className="mt-2" />
+              <StartOptions offers={offers} showStore className="mt-6" />
             </div>
           )}
         </Container>

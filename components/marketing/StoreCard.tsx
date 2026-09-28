@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, Ticket } from "lucide-react";
+import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { StoreLogo } from "@/components/coupon/StoreLogo";
@@ -40,11 +40,6 @@ export function StoreCard({ store }: { store: StoreWithMeta }) {
             {store.bestDiscountLabel}
           </Badge>
         )}
-        <span className="inline-flex items-center gap-1 text-xs text-ink-subtle">
-          <Ticket className="h-3.5 w-3.5" aria-hidden="true" />
-          {store.activeCouponCount}{" "}
-          {store.activeCouponCount === 1 ? "active deal" : "active deals"}
-        </span>
         {store.categories.slice(0, 2).map((cat) => (
           <Badge key={cat.id} variant="outline">
             {cat.name}

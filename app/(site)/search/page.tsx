@@ -17,7 +17,7 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Search",
-  description: "Search stores, coupons, and articles across DaddyPromoos.",
+  description: "Search tools, offers, and articles across DaddyPromoos.",
   alternates: { canonical: "/search" },
   robots: { index: false },
 };
@@ -50,14 +50,14 @@ export default async function SearchPage({
         description={
           query
             ? `${totalResults} ${totalResults === 1 ? "result" : "results"} for "${query}"`
-            : "Find stores, coupon codes, and articles."
+            : "Find tools, offers, and articles."
         }
       />
       <Section padding="tight">
         <Container size="wide">
           <div className="max-w-xl">
             <Suspense>
-              <FilterBar searchPlaceholder="Search stores, coupons, articles" />
+              <FilterBar searchPlaceholder="Search tools, offers, articles" />
             </Suspense>
           </div>
 
@@ -76,7 +76,7 @@ export default async function SearchPage({
 
           {couponResults && couponResults.coupons.length > 0 && (
             <div className="mt-10">
-              <h2 className="text-h4 font-bold text-pine">Coupons</h2>
+              <h2 className="text-h4 font-bold text-pine">Offers</h2>
               <CouponGrid
                 coupons={couponResults.coupons.map(toTicketCoupon)}
                 className="mt-5"

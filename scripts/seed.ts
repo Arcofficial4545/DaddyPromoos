@@ -51,6 +51,24 @@ const now = Date.now();
 const days = (n: number) => new Date(now + n * 86_400_000);
 const REVIEWED_AT = new Date(now - 3 * 86_400_000);
 
+/* ------------------------------------------------------------------ */
+/* Bylines + store SEO copy (shared with scripts/reposition-builder-   */
+/* focus.ts, which brings production in line with these values)       */
+/* ------------------------------------------------------------------ */
+
+export const FOUNDER_BIO =
+  "Founder and CEO of DaddyPromoos. Abdul writes on how we research and score tools, and why every verdict names the catch, not just the praise.";
+
+/** The publication's own byline, for coverage not written by a named person. */
+export const HOUSE_BYLINE = "DaddyPromoos Editorial";
+export const HOUSE_BYLINE_BIO =
+  "Research-based coverage from the DaddyPromoos team. Pricing and plan details are checked against each vendor's official pages, and scores follow our published five-criteria method.";
+
+export const storeSeoTitle = (name: string) =>
+  `${name} Review: Pricing, Pros & Cons`;
+export const storeSeoDescription = (name: string, tagline: string) =>
+  `Independent review of ${name}: verdict, 0–10 score, pricing, pros and cons, and alternatives. ${tagline}`;
+
 /** Pick up a brand asset already fetched to /public (by assets:fetch) so a
  * destructive reseed doesn't blank logos/covers. Returns a public URL or null. */
 function diskAsset(dir: string, slug: string, exts: string[]): string | null {
@@ -142,6 +160,8 @@ type StoreSeed = {
   websiteUrl: string;
   rating: number; // editorial score / 2, on the 0–5 scale
   isFeatured?: boolean;
+  /** Off-focus brands stay in the catalog but are not published (default true). */
+  isActive?: boolean;
   isFictional?: boolean;
   cats: string[];
   // Company page content (omit for fictional demo brands)
@@ -234,23 +254,23 @@ const storeSeed: StoreSeed[] = [
     goodPoints: [
       "Exports genuine React + Supabase code and syncs to GitHub, so there's a credible path off the platform.",
       "Architecture choices are sensible defaults an engineer can pick up rather than proprietary abstractions.",
-      "Conversational iteration is fast, and visual edits let you tweak details without spending prompts.",
+      "Conversational iteration is fast, and visual edits let you tweak details directly instead of prompting for every small change.",
       "Free tier is enough to judge output quality on your own idea before paying.",
     ],
     weakPoints: [
-      "Message-based pricing means costs scale with how much you iterate, not how much you ship.",
+      "Credit-based pricing means costs scale with how much you iterate, not how much you ship.",
       "You still need Supabase (and sometimes other services) knowledge once you outgrow the happy path.",
       "Complex, unusual product logic can send the AI in circles — human review remains mandatory.",
     ],
     pricingSummary: [
-      { plan: "Free", price: "No card required", note: "5 build credits/day (up to 30/mo) plus 20 monthly Cloud credits; public projects. Verified July 2026." },
-      { plan: "Pro / Business", price: "Monthly, credit-metered", note: "Adds a monthly credit balance on top of the daily build + Cloud grants; heavy iteration consumes credits. Confirm the live tiers and prices on the official page. Verified July 2026." },
+      { plan: "Free", price: "Free", note: "5 build credits a day (up to 30 a month) plus 20 Cloud credits a month. Checked 24 Sep 2026." },
+      { plan: "Pro / Business", price: "Monthly, credit-metered", note: "Adds a monthly credit balance on top of the daily build + Cloud grants; heavy iteration consumes credits. Confirm the live tiers and prices on the official page. Checked 24 Sep 2026." },
     ],
     pricingUrl: "https://lovable.dev/pricing",
     howToRedeem: defaultRedeem,
     faq: [
       { q: "Do I really own the code?", a: "Yes — projects can sync to your GitHub, and the output is standard React with a Supabase backend, not a proprietary format." },
-      { q: "What does the free plan include?", a: "A daily message allowance and public projects — enough to build something real and inspect the code it writes before subscribing." },
+      { q: "What does the free plan include?", a: "5 build credits a day (up to 30 a month) plus 20 Cloud credits a month — enough to build something real and inspect the code it writes before subscribing." },
       { q: "Do I need to know how to code?", a: "Not to get started. But teams that eventually read and edit the generated code get dramatically more out of it." },
       { q: "Lovable or Base44?", a: "Lovable if the code must be yours; Base44 if you want the most managed, fastest path to a hosted app. Our head-to-head comparison covers the details." },
     ],
@@ -265,6 +285,7 @@ const storeSeed: StoreSeed[] = [
       "Daraz is the dominant online marketplace across Pakistan, Bangladesh, Sri Lanka, and Nepal, carrying everything from electronics to daily essentials. Owned by Alibaba Group, it runs frequent sale events and bank-card partnerships.",
     websiteUrl: "https://www.daraz.pk",
     rating: 3.7,
+    isActive: false, // off-focus for an AI-builder site; kept, not published
     isFeatured: true,
     cats: ["e-commerce"],
     heroSummary:
@@ -312,6 +333,7 @@ const storeSeed: StoreSeed[] = [
       "Sage provides accounting, payroll, and HR software tailored to UK small and mid-sized businesses. Making Tax Digital compliance, solid reporting, and accountant familiarity have kept it a mainstay of British bookkeeping for decades.",
     websiteUrl: "https://www.sage.com/en-gb/",
     rating: 3.9,
+    isActive: false, // off-focus for an AI-builder site; kept, not published
     isFeatured: true,
     cats: ["accounting-finance", "saas"],
     heroSummary:
@@ -617,6 +639,7 @@ const storeSeed: StoreSeed[] = [
       "QuickBooks automates bookkeeping, invoicing, and tax prep for millions of small businesses. Deep bank integrations and accountant familiarity make it the default in North America.",
     websiteUrl: "https://quickbooks.intuit.com",
     rating: 4.0,
+    isActive: false, // off-focus for an AI-builder site; kept, not published
     cats: ["accounting-finance", "saas"],
     heroSummary:
       "QuickBooks Online, by Intuit, is the default small-business accounting suite in North America: automated bank feeds, invoicing, expense capture, and tax-ready reports, with payroll available as an add-on. Nearly every US accountant works in it daily.",
@@ -660,6 +683,7 @@ const storeSeed: StoreSeed[] = [
       "Shopify powers everything from first stores to enterprise brands with hosted storefronts, payments, and a vast app ecosystem. Its famous intro offer makes starting nearly free.",
     websiteUrl: "https://www.shopify.com",
     rating: 4.4,
+    isActive: false, // off-focus for an AI-builder site; kept, not published
     cats: ["e-commerce", "saas"],
     heroSummary:
       "Shopify is the leading hosted e-commerce platform: storefront, checkout, payments, and inventory in one subscription, extended by thousands of apps and themes. It scales from a first side-project store to enterprise brands on Shopify Plus.",
@@ -1188,9 +1212,9 @@ const couponSeed: CouponSeed[] = [
   { store: "base44", title: "Save with annual billing on paid plans", type: "deal", discountLabel: "ANNUAL SAVING", terms: "Choosing annual billing lowers the effective monthly price of Base44's paid tiers versus paying monthly — the official pricing page states the live rate.", destinationUrl: "https://base44.com/pricing", isVerified: true, sortWeight: 85 },
   { store: "base44", title: "Earn extra credits with referrals", type: "deal", discountLabel: "REFERRAL CREDITS", terms: "Base44's in-app refer-a-friend option grants extra message credits for each successful invite. Credits reset each month, so time invites within your build cycle.", destinationUrl: "https://base44.com", isVerified: false, sortWeight: 70 },
   // Lovable
-  { store: "lovable", title: "Free tier — daily messages, real code output", type: "deal", discountLabel: "FREE TIER", terms: "Build public projects with daily message limits and inspect the generated code before paying.", destinationUrl: "https://lovable.dev/pricing", isVerified: true, sortWeight: 100 },
+  { store: "lovable", title: "Free plan — 5 build credits a day", type: "deal", discountLabel: "FREE PLAN", terms: "The free plan includes 5 build credits a day (up to 30 a month) plus 20 Cloud credits a month — enough to build part of your own idea and read the code before paying. Checked against lovable.dev on 24 Sep 2026.", destinationUrl: "https://lovable.dev/pricing", isVerified: true, sortWeight: 100 },
   { store: "lovable", title: "Save with annual billing on paid plans", type: "deal", discountLabel: "ANNUAL SAVING", terms: "Paid plans are typically cheaper per month when billed annually. The public pricing page didn't state an exact annual rate at our last check, so confirm the current terms on lovable.dev/pricing before you commit.", destinationUrl: "https://lovable.dev/pricing", isVerified: false, sortWeight: 90 },
-  { store: "lovable", title: "Student discount with a valid student email", type: "deal", discountLabel: "STUDENT", terms: "Lovable offers a discount for students who verify with a valid student email. Check current eligibility and the exact rate on the official students page. Verified July 2026.", destinationUrl: "https://lovable.dev/students", isVerified: true, sortWeight: 88 },
+  { store: "lovable", title: "Student discount with a valid student email", type: "deal", discountLabel: "STUDENT", terms: "Lovable offers a discount for students who verify with a valid student email. Check current eligibility and the exact rate on the official students page. Checked against lovable.dev on 24 Sep 2026.", destinationUrl: "https://lovable.dev/students", isVerified: true, sortWeight: 88 },
   // Daraz
   { store: "daraz", title: "Today's vouchers and flash sales on Daraz", type: "deal", discountLabel: "DAILY DEALS", terms: "Collectable vouchers and rotating flash sales on the Daraz app and site; terms shown per voucher at checkout.", destinationUrl: "https://www.daraz.pk", isVerified: true, sortWeight: 100 },
   { store: "daraz", title: "Bank-card discounts on selected days", type: "deal", discountLabel: "BANK OFFERS", terms: "Partner bank cards get percentage discounts on selected days and categories — see the bank offers page for the current calendar.", destinationUrl: "https://www.daraz.pk", isVerified: true, sortWeight: 90 },
@@ -1416,11 +1440,11 @@ const reviewExtras: Record<string, ReviewExtra> = {
       ),
       h2("Where it earns its score"),
       pt(
-        "The answer to the lock-in question is the whole point. You get AI-speed prototyping and you leave with a repo your team owns. Architecture choices are sensible defaults an engineer can pick up, not black boxes. Conversational iteration is quick, and visual edits let you adjust details without spending messages on trivia. The free tier is enough to judge output quality on your own idea before you pay anything, which is exactly the evaluation you should run.",
+        "The answer to the lock-in question is the whole point. You get AI-speed prototyping and you leave with a repo your team owns. Architecture choices are sensible defaults an engineer can pick up, not black boxes. Conversational iteration is quick, and visual edits let you adjust details directly instead of prompting for every small change. The free tier is enough to judge output quality on your own idea before you pay anything, which is exactly the evaluation you should run.",
       ),
       h2("The catch"),
       pt(
-        "Message-based pricing means cost scales with how much you iterate, not how much you ship — a product that fights you is a product that costs more. You still need Supabase knowledge (and sometimes other services) once you outgrow the happy path; the code is yours, which also means the maintenance is yours. And complex, unusual product logic can send the AI in circles, so human review stays mandatory before anything customer-facing goes live.",
+        "Credit-based pricing means cost scales with how much you iterate, not how much you ship — a product that fights you is a product that costs more. You still need Supabase knowledge (and sometimes other services) once you outgrow the happy path; the code is yours, which also means the maintenance is yours. And complex, unusual product logic can send the AI in circles, so human review stays mandatory before anything customer-facing goes live.",
       ),
       h2("Who should use it"),
       pt(
@@ -2460,7 +2484,7 @@ export function buildPostSeed<C extends { id: string }>(
         h2("Ownership and lock-in"),
         pt("Lovable's defining feature is the export: real React code and a Supabase backend you control, syncable to GitHub. Base44 keeps the stack managed, which is precisely why it's faster to a working app — there is simply less to configure. Decide how much that trade matters before you subscribe."),
         h2("Pricing structure"),
-        pt("Both are usage-metered — Base44 by credits, Lovable by messages — and both have free tiers that are genuinely enough to evaluate output quality on your own idea. Exact allowances change; check the official pricing pages linked from our reviews."),
+        pt("Both are usage-metered by credits, and both have free tiers that are genuinely enough to evaluate output quality on your own idea. Exact allowances change; check the official pricing pages linked from our reviews."),
         couponEmbed(base44Offer.id),
         couponEmbed(lovableOffer.id),
         h2("Bottom line"),
@@ -2588,6 +2612,9 @@ export function buildPromoSeed(
   const { base44Offer, lovableOffer, sageOffer, shopifyOffer, canvaOffer } =
     deps;
 
+  // All off by default: an editorial site shouldn't interrupt readers with
+  // popups or put one brand's banner on another brand's page. Switch a
+  // placement on deliberately from /admin/promos.
   return [
     {
       name: "Sidebar: Base44 free plan",
@@ -2595,7 +2622,7 @@ export function buildPromoSeed(
       type: "coupon-highlight",
       payload: { couponId: base44Offer.id },
       targetingRules: {},
-      isActive: true,
+      isActive: false,
       priority: 10,
     },
     {
@@ -2604,7 +2631,7 @@ export function buildPromoSeed(
       type: "coupon-highlight",
       payload: { couponId: shopifyOffer.id },
       targetingRules: { paths: ["/blog", "/tools"] },
-      isActive: true,
+      isActive: false,
       priority: 10,
     },
     {
@@ -2613,7 +2640,7 @@ export function buildPromoSeed(
       type: "coupon-highlight",
       payload: { couponId: canvaOffer.id },
       targetingRules: {},
-      isActive: true,
+      isActive: false,
       priority: 10,
     },
     {
@@ -2621,12 +2648,12 @@ export function buildPromoSeed(
       placement: "popup-timed",
       type: "newsletter",
       payload: {
-        title: "The five best deals, every Friday",
-        body: "One short email a week with the verified offers worth using. No noise, unsubscribe anytime.",
+        title: "New reviews and build guides, every week",
+        body: "One short email a week: new reviews, head-to-heads, and guides for building with AI. No noise, unsubscribe anytime.",
         ctaLabel: "Subscribe",
       },
       targetingRules: { delayMs: 14_000, frequencyCap: 1, frequencyDays: 7, excludePaths: ["/admin"] },
-      isActive: true,
+      isActive: false,
       priority: 5,
     },
     {
@@ -2635,7 +2662,7 @@ export function buildPromoSeed(
       type: "coupon-highlight",
       payload: { couponId: lovableOffer.id },
       targetingRules: { frequencyCap: 1, frequencyDays: 3, excludePaths: ["/admin"] },
-      isActive: true,
+      isActive: false,
       priority: 5,
     },
     {
@@ -2649,7 +2676,7 @@ export function buildPromoSeed(
         ctaLabel: "See the offer",
       },
       targetingRules: { paths: ["/"] },
-      isActive: true,
+      isActive: false,
       priority: 10,
     },
   ];
@@ -2681,10 +2708,10 @@ async function main() {
         affiliateBaseUrl: s.websiteUrl,
         rating: s.rating,
         isFeatured: s.isFeatured ?? false,
-        isActive: true,
+        isActive: s.isActive ?? true,
         isFictional: s.isFictional ?? false,
-        seoTitle: `${s.name} Review, Deals, and Pricing`,
-        seoDescription: `Honest editorial review of ${s.name} plus current verified offers. ${s.tagline}`,
+        seoTitle: storeSeoTitle(s.name),
+        seoDescription: storeSeoDescription(s.name, s.tagline),
         heroSummary: s.heroSummary ?? null,
         verdict: s.verdict ?? null,
         editorialScore: s.editorialScore ?? null,
@@ -2758,7 +2785,7 @@ async function main() {
   };
 
   const base44Offer = pick("Free plan — build and publish without a card");
-  const lovableOffer = pick("Free tier — daily messages, real code output");
+  const lovableOffer = pick("Free plan — 5 build credits a day");
   const sageOffer = pick("Current new-customer offer on Sage Accounting");
   const shopifyOffer = pick("Shopify's standing new-merchant intro offer");
   const canvaOffer = pick("Canva Pro free trial for new users");
@@ -2770,28 +2797,26 @@ async function main() {
     .values([
       {
         name: "Abdul Rehman Ch",
-        bio: "Founder and CEO of DaddyPromoos. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
+        bio: FOUNDER_BIO,
         role: "Founder & CEO",
       },
       {
-        name: "Maya Whitfield",
-        bio: "Senior Editor at DaddyPromoos. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
-        role: "Senior Editor",
-      },
-      {
-        name: "Haw",
-        bio: "Editor at DaddyPromoos. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
-        role: "Editor",
+        name: HOUSE_BYLINE,
+        bio: HOUSE_BYLINE_BIO,
+        role: "Editorial team",
       },
     ])
     .returning();
-  const [abdul] = authorRows;
-  // The methodology/trust piece is bylined to the founder; everything else
-  // rotates across the editorial team so posts read as a real newsroom.
+  const [abdul, editorial] = authorRows;
+  // The methodology/trust piece is bylined to the founder. Everything else
+  // keeps the original three-slot rotation, with both non-founder slots on the
+  // house byline: there are no other named editors, and a byline must never
+  // invent one.
+  const bylineRotation = [abdul, editorial, editorial];
   const authorIdForPost = (slug: string, i: number): string =>
     slug === "how-we-score-every-tool"
       ? abdul.id
-      : authorRows[i % authorRows.length].id;
+      : bylineRotation[i % bylineRotation.length].id;
 
   const postSeed = buildPostSeed({
     catBySlug,

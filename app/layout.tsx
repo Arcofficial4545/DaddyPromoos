@@ -37,11 +37,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: "DaddyPromoos — Verified deals on AI tools and SaaS",
+    default: "DaddyPromoos — Independent reviews of AI app builders and coding tools",
     template: "%s | DaddyPromoos",
   },
   description:
-    "DaddyPromoos is a deals and discovery platform for AI tools, SaaS products, and digital services. Editorial reviews plus verified coupon codes, updated daily.",
+    "Independent, scored reviews of the AI app builders and coding tools founders use to ship software — researched against official docs and pricing, with the catch stated up front.",
 };
 
 export default function RootLayout({

@@ -8,11 +8,11 @@ import { breadcrumbLd, ogImageUrl } from "@/lib/seo/jsonld";
 export const metadata: Metadata = {
   title: "How We Review — Our Methodology",
   description:
-    "How DaddyPromoos researches, scores, and maintains its reviews — the five criteria, the 0–10 scale, how deals are verified, and our independence statement.",
+    "How DaddyPromoos researches, scores, and maintains its reviews — the five criteria, the 0–10 scale, where offers come from, how we use AI, and our independence statement.",
   alternates: { canonical: "/how-we-review" },
   openGraph: {
     title: "How We Review — DaddyPromoos",
-    description: "Our methodology for scoring tools and verifying offers.",
+    description: "Our methodology for researching and scoring tools.",
     images: [ogImageUrl("How We Review", "Our methodology")],
   },
 };
@@ -61,9 +61,9 @@ export default function HowWeReviewPage() {
             How we review
           </h1>
           <p className="mt-4 max-w-2xl text-body-lg text-mint/85">
-            No automated scrapers, no fabricated stats, no invented methodology.
-            Here is exactly how a tool earns a score and how deals get onto
-            DaddyPromoos.
+            No fabricated stats, no pay-to-play scores, no invented
+            methodology. Here is exactly how a tool earns a score and where the
+            offers on DaddyPromoos come from.
           </p>
         </Container>
       </Section>
@@ -72,16 +72,16 @@ export default function HowWeReviewPage() {
         <Container className="max-w-3xl space-y-12">
           <div>
             <h2 className="font-display text-2xl font-bold text-pine">
-              What we test
+              How we research
             </h2>
             <p className="mt-3 leading-relaxed text-ink-muted">
-              We research each product the way a serious buyer would: its
-              official documentation and pricing, hands-on exploration where
-              practical, and the public track record of how it behaves for real
-              users. We write the verdict before we think about the deal — the
-              recommendation is never the product of what pays. Every review
-              states a clear bottom line <em>and</em> the catch, because a
-              review without a downside isn&apos;t a review.
+              We research each product the way a careful buyer would: its
+              official documentation and pricing, and the public track record
+              of how it behaves for real users. We write the verdict before we
+              look at any offer — the recommendation is never the product of
+              what pays. Every review states a clear bottom line <em>and</em>{" "}
+              the catch, because a review without a downside isn&apos;t a
+              review.
             </p>
           </div>
 
@@ -124,16 +124,28 @@ export default function HowWeReviewPage() {
 
           <div>
             <h2 className="font-display text-2xl font-bold text-pine">
-              How deals are sourced and verified
+              Where offers come from
             </h2>
             <p className="mt-3 leading-relaxed text-ink-muted">
-              Deals on real brands come from official sources — brand pricing
-              pages, published promotions, and partner programs — and each is
-              checked by a person before it goes live. We never invent codes.
-              Factual claims like pricing are dated with a &ldquo;verified&rdquo;
-              stamp, and we re-check listings so the dates on the page mean
-              something. Usage counts only appear once there&apos;s real data
-              behind them.
+              Offers on DaddyPromoos come from brands&apos; own pages — free
+              plans, trials, education discounts, and published promotions —
+              and every one links to the brand&apos;s official page. We never
+              invent codes. Reviews show when they were last updated, but
+              vendors change pricing often: confirm the current price on the
+              vendor&apos;s own page before you pay. Usage counts only appear
+              once there&apos;s real data behind them.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-display text-2xl font-bold text-pine">
+              How we use AI
+            </h2>
+            <p className="mt-3 leading-relaxed text-ink-muted">
+              We use AI tools to help research and draft our coverage — it would
+              be odd to review AI tools without using them. Scores, verdicts,
+              and what gets published are decided by us, and we check pricing
+              and plan details against each vendor&apos;s official pages.
             </p>
           </div>
 

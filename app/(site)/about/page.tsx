@@ -8,25 +8,25 @@ import { PageHeader } from "@/components/marketing/PageHeader";
 export const metadata: Metadata = {
   title: "About DaddyPromoos",
   description:
-    "Who we are, how we score tools, and why DaddyPromoos exists: independent reviews of AI tools and SaaS, paired with codes that actually work. Founded by Abdul Rehman Ch.",
+    "Who we are and why DaddyPromoos exists: independent, research-based reviews of the AI app builders and coding tools founders use to ship software. Founded by Abdul Rehman Ch.",
   alternates: { canonical: "/about" },
 };
 
 const principles = [
   {
-    icon: BadgeCheck,
-    title: "Offers come from official sources",
-    body: "We list what the brand publishes on its own pricing, education, or promotions page, and we link you straight there. We do not invent codes, and an offer only carries a verified stamp once a person has checked it and dated the check.",
+    icon: Newspaper,
+    title: "Written for founders who ship",
+    body: "We cover the AI app builders and coding tools that take a product from idea to launch, and we write for the person choosing one — often a founder who doesn't write code.",
   },
   {
-    icon: Newspaper,
-    title: "Editorial first",
-    body: "We write reviews and comparisons the way we want to read them: opinionated, specific, and honest about the trade-offs. Deals support the coverage, never the other way round.",
+    icon: BadgeCheck,
+    title: "Research, with the catch up front",
+    body: "Every review is researched against the vendor's official documentation and pricing, scored on the same five criteria, and says who should skip the tool as plainly as who should use it.",
   },
   {
     icon: RefreshCcw,
     title: "Dated, not evergreen",
-    body: "SaaS pricing moves. Every pricing claim carries the date it was checked against the brand's own page, so you can see how fresh it is instead of taking our word for it.",
+    body: "AI tools change monthly. Reviews show when they were last updated and link to the vendor's own pricing page, so you can check what's current before you pay.",
   },
 ];
 
@@ -41,7 +41,7 @@ const founders = [
     name: "Ahmed Raza Hassan",
     role: "Co-Founder & CTO",
     initials: "AH",
-    bio: "Ahmed leads engineering and the systems behind our testing. He builds the tooling that lets us verify deals at scale and keep every score backed by real, repeatable checks.",
+    bio: "Ahmed leads engineering: the site, its data, and the publishing tools that keep reviews and pricing details current.",
   },
 ];
 
@@ -49,8 +49,8 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        title="Independent reviews for people who read the fine print"
-        description="DaddyPromoos covers AI tools, SaaS products, and digital services, scores them from 0 to 10, and pairs that coverage with verified codes so you never overpay for software again."
+        title="Independent reviews for founders building with AI"
+        description="DaddyPromoos researches the AI app builders and coding tools founders use to ship, scores them from 0 to 10, and says who each one is for — and who should skip it."
       />
       <Section>
         <Container>
@@ -75,19 +75,19 @@ export default function AboutPage() {
               Why we exist
             </h2>
             <p>
-              DaddyPromoos started with a simple irritation. Software buyers
-              routinely pay 20 to 30 percent more than they need to, because
-              working discounts are scattered across newsletters, partner pages,
-              and expired listicles. We fix that by doing the tedious part,
-              finding, testing, and re-testing offers, and publishing only what
-              works.
+              DaddyPromoos started with a simple frustration. Choosing an AI
+              builder means wading through launch hype, roundups that rate
+              everything highly, and pricing pages built on credits nobody
+              explains. Founders who can&apos;t read code have the most to lose
+              from a wrong pick, and the least ability to tell.
             </p>
             <p>
-              The editorial side exists because a discount is only useful if the
-              product is worth buying. Our reviews and comparisons are written by
-              people who use these tools every day, and no company can pay for
-              coverage or a rating. When we hand out a score, the number is ours
-              alone.
+              So we do the research: official documentation and pricing, the
+              public track record, and how each tool&apos;s costs actually scale.
+              Then we score it on five criteria, say who it&apos;s for and who
+              should skip it, and compare it head to head with the
+              alternatives. No company can pay for coverage or a rating. When
+              we hand out a score, the number is ours alone.
             </p>
             <p>
               Some outbound links earn us a commission at no cost to you. That is
@@ -143,11 +143,10 @@ export default function AboutPage() {
                   falls short.
                 </p>
                 <p>
-                  So we do it differently. We test each tool the way a real user
-                  would, we score it honestly, and we say the catch out loud.
-                  Then, once you have decided what to buy, we make sure you start
-                  on the best honest price we can find. Proof first, price
-                  second, in that order and never the reverse.
+                  So we do it differently. We research each tool against its
+                  official docs and pricing, score it on the same five criteria,
+                  and say the catch out loud. If a tool isn&apos;t right for
+                  you, we would rather point you to the one that is.
                 </p>
                 <p>
                   If we ever publish a score you cannot trust, we have failed at

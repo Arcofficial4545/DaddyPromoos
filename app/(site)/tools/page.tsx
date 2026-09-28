@@ -17,9 +17,9 @@ import { breadcrumbLd, itemListLd, ogImageUrl } from "@/lib/seo/jsonld";
 const PAGE_SIZE = 24;
 
 export const metadata: Metadata = {
-  title: "All Tools — Reviewed AI Tools and SaaS",
+  title: "All Tools — AI App Builders, Coding Tools, and More",
   description:
-    "Every tool on DaddyPromoos: AI tools, SaaS products, and digital services with editorial reviews, scores, and the best available deals.",
+    "Every tool on DaddyPromoos: AI app builders, AI coding tools, and the software founders use to ship, with independent reviews and 0–10 scores.",
   alternates: { canonical: "/tools" },
   openGraph: {
     title: "All Tools | DaddyPromoos",
@@ -73,7 +73,7 @@ export default async function StoresPage({
       />
       <PageHeader
         title="All tools"
-        description="Every product we cover, with editorial scores, active deal counts, and the best current price. Updated continuously."
+        description="Every product we cover, with independent editorial scores and links to each tool's official pricing."
       />
       <Section padding="tight">
         <Container size="wide">

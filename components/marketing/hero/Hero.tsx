@@ -36,7 +36,6 @@ export type HeroVs = { a: string; b: string; slug: string };
 type HeroProps = {
   toolsReviewed: number;
   comparisonsCount: number;
-  dealsCount: number;
   cards: HeroCard[];
   vsChips: HeroVs[];
   /** Deep links rendered as the quick-tag row under the search bar. */
@@ -77,15 +76,16 @@ const FLOAT_SLOTS = [
   },
 ];
 
-/** The hook: independent research, a real score, and the tools worth buying.
- * "Researched" not "Tested": every verdict on this site is desk research
- * against official docs and pricing, not a hands-on lab test. Claiming
- * otherwise is a compliance problem with the brands we cover. */
+/** The hook: independent research, a real score, and a reader who leaves
+ * ready to build. "Researched" not "Tested": every verdict on this site is
+ * desk research against official docs and pricing, not a hands-on lab test.
+ * Claiming otherwise is a compliance problem with the brands we cover. */
 const HEADLINE: { word: string; accent?: boolean }[] = [
   { word: "Researched." },
   { word: "Scored." },
-  { word: "Worth", accent: true },
-  { word: "buying.", accent: true },
+  { word: "Ready", accent: true },
+  { word: "to", accent: true },
+  { word: "build.", accent: true },
 ];
 
 export function Hero({ cards, vsChips, quickTags }: HeroProps) {
@@ -299,9 +299,9 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         </h1>
 
         <p className="hero-rise mt-6 max-w-xl text-body-lg text-mint/85">
-          We research the AI tools everyone&apos;s arguing about against their
-          official docs and pricing, score them 0&ndash;10, and point you at the
-          best honest price on the one you pick.
+          Independent reviews of the AI app builders and coding tools founders
+          use to ship software &mdash; researched against official docs and
+          pricing, scored 0&ndash;10, with the catch stated up front.
         </p>
 
         {/* Command-style search */}

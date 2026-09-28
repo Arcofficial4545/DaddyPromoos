@@ -1,23 +1,30 @@
 import "server-only";
-import { asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq } from "drizzle-orm";
 import { db } from "../client";
 import {
   categories,
   storeCategories,
+  stores,
   type Category,
   type NewCategory,
 } from "../schema";
 
 export type CategoryWithCount = Category & { storeCount: number };
 
+/** Categories with a count of their *active* tools — a deactivated tool no
+ * longer counts, so a category it emptied shows 0 and can be hidden. */
 export async function listCategories(): Promise<CategoryWithCount[]> {
   const rows = await db
     .select({
       category: categories,
-      storeCount: count(storeCategories.storeId),
+      storeCount: count(stores.id),
     })
     .from(categories)
     .leftJoin(storeCategories, eq(storeCategories.categoryId, categories.id))
+    .leftJoin(
+      stores,
+      and(eq(stores.id, storeCategories.storeId), eq(stores.isActive, true)),
+    )
     .groupBy(categories.id)
     .orderBy(asc(categories.sortOrder), asc(categories.name));
 

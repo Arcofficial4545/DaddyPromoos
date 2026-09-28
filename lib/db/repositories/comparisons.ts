@@ -10,14 +10,19 @@ export type ComparisonWithStores = Comparison & {
 };
 
 /** Attach both stores (with meta) to comparison rows; drop any with a
- * missing/inactive store so public pages never render a broken matchup. */
+ * missing/inactive store so public pages never render a broken matchup.
+ * Admin passes `activeOnly: false` so a matchup stays editable after one of
+ * its tools is deactivated. */
 async function attachStores(
   rows: Comparison[],
+  { activeOnly = true }: { activeOnly?: boolean } = {},
 ): Promise<ComparisonWithStores[]> {
   if (rows.length === 0) return [];
   const ids = [...new Set(rows.flatMap((r) => [r.storeAId, r.storeBId]))];
   const stores = await getStoresByIds(ids);
-  const byId = new Map(stores.map((s) => [s.id, s]));
+  const byId = new Map(
+    stores.filter((s) => !activeOnly || s.isActive).map((s) => [s.id, s]),
+  );
 
   const out: ComparisonWithStores[] = [];
   for (const row of rows) {
@@ -71,6 +76,23 @@ export async function getComparisonBySlug(
   return withStores ?? null;
 }
 
+/** Published comparisons that include a given tool, flagship first. */
+export async function listPublishedComparisonsForStore(
+  storeId: string,
+): Promise<ComparisonWithStores[]> {
+  const rows = await db
+    .select()
+    .from(comparisons)
+    .where(
+      and(
+        eq(comparisons.status, "published"),
+        or(eq(comparisons.storeAId, storeId), eq(comparisons.storeBId, storeId)),
+      ),
+    )
+    .orderBy(desc(comparisons.isFeatured), asc(comparisons.title));
+  return attachStores(rows);
+}
+
 /** Published comparison slugs (sitemap + static params). */
 export async function listPublishedComparisonSlugs(): Promise<string[]> {
   const rows = await db
@@ -111,7 +133,7 @@ export async function adminListComparisons(): Promise<ComparisonWithStores[]> {
     .select()
     .from(comparisons)
     .orderBy(desc(comparisons.updatedAt));
-  return attachStores(rows);
+  return attachStores(rows, { activeOnly: false });
 }
 
 export async function adminGetComparison(

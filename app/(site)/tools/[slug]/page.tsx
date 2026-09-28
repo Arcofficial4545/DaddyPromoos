@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Check, Minus } from "lucide-react";
+import { ArrowRight, Check, Minus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
-import { CouponGrid } from "@/components/coupon/CouponGrid";
-import { CouponTicket } from "@/components/coupon/CouponTicket";
 import { StoreLogo } from "@/components/coupon/StoreLogo";
-import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { ArticleRenderer } from "@/components/blog/ArticleRenderer";
 import type { TiptapNode } from "@/components/blog/tiptap";
 import { DisclosureLine } from "@/components/marketing/DisclosureLine";
@@ -18,12 +15,16 @@ import { PricingTable } from "@/components/marketing/company/PricingTable";
 import { ScoreCard } from "@/components/marketing/company/ScoreCard";
 import { ScorecardBars } from "@/components/marketing/company/ScorecardBars";
 import { ScreenshotsStrip } from "@/components/marketing/company/ScreenshotsStrip";
+import { StartOptions } from "@/components/marketing/company/StartOptions";
 import { StickyNav } from "@/components/marketing/company/StickyNav";
 import { VerdictBox } from "@/components/marketing/company/VerdictBox";
-import { PromoSlot } from "@/components/promo/PromoSlot";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getComparisonForPair } from "@/lib/db/repositories/comparisons";
+import {
+  getComparisonForPair,
+  listPublishedComparisonsForStore,
+} from "@/lib/db/repositories/comparisons";
 import { listCouponsForStore } from "@/lib/db/repositories/coupons";
+import { listPostsForStore } from "@/lib/db/repositories/posts";
 import {
   getStoreBySlug,
   getStoresBySlugs,
@@ -60,13 +61,13 @@ export async function generateMetadata({
   const title =
     store.seoTitle ??
     (hasReview
-      ? `${store.name} Review, Pricing, and Deals`
-      : `${store.name} — Profile, Pricing, and Deals`);
+      ? `${store.name} Review: Pricing, Pros & Cons`
+      : `${store.name} — Profile and Pricing`);
   const description =
     store.seoDescription ??
     (hasReview
-      ? `Our independent ${store.name} review: verdict, score, pricing, and the best current deals. ${store.tagline}`
-      : `${store.name} profile plus current verified offers. ${store.tagline}`);
+      ? `Our independent ${store.name} review: verdict, 0–10 score, pricing, pros and cons, and alternatives. ${store.tagline}`
+      : `${store.name} profile, pricing, and official offers. ${store.tagline}`);
   return {
     title,
     description,
@@ -93,7 +94,11 @@ export default async function ToolPage({
   const store = await getStoreBySlug(slug);
   if (!store) notFound();
 
-  const { active, expired } = await listCouponsForStore(store.id);
+  const [{ active, expired }, guides, comparisons] = await Promise.all([
+    listCouponsForStore(store.id),
+    listPostsForStore(store.id, 4),
+    listPublishedComparisonsForStore(store.id),
+  ]);
   const hasReview = hasCompleteReview(store);
   const alternatives = store.alternativeSlugs?.length
     ? await getStoresBySlugs(store.alternativeSlugs)
@@ -101,6 +106,7 @@ export default async function ToolPage({
   const altCompare = await Promise.all(
     alternatives.map((a) => getComparisonForPair(store.id, a.id)),
   );
+  const hasCoverage = guides.length > 0 || comparisons.length > 0;
 
   const bestDeal = active[0] ?? null;
   const goHref = bestDeal
@@ -124,7 +130,9 @@ export default async function ToolPage({
     anchors.push({ id: "pros-cons", label: "Pros & cons" });
   if (alternatives.length > 0)
     anchors.push({ id: "alternatives", label: "Alternatives" });
-  if (active.length > 0) anchors.push({ id: "deals", label: "Deals" });
+  if (hasCoverage) anchors.push({ id: "guides", label: "Guides" });
+  if (active.length > 0)
+    anchors.push({ id: "get-started", label: "Get started" });
   if (store.faq?.length) anchors.push({ id: "faq", label: "FAQ" });
 
   const jsonLdItems = [
@@ -212,7 +220,7 @@ export default async function ToolPage({
                 score={store.editorialScore}
                 toolName={store.name}
                 goHref={goHref}
-                hideDealsCta={active.length === 0}
+                hideStartCta={active.length === 0}
               />
               <DisclosureLine className="mt-3 text-center text-xs" />
             </div>
@@ -388,36 +396,51 @@ export default async function ToolPage({
             </section>
           )}
 
-          {/* -------------------------------------------- Deals */}
-          {active.length > 0 && (
-            <section id="deals" className="scroll-mt-28">
+          {/* ---------------------------------- Guides & comparisons */}
+          {hasCoverage && (
+            <section id="guides" className="scroll-mt-28">
               <SectionHeader
-                kicker="DEALS"
-                title={`Ways to save on ${store.name}`}
+                kicker="GUIDES"
+                title={`${store.name} guides & comparisons`}
+              />
+              <div className="mt-6 grid gap-8 sm:grid-cols-2">
+                {guides.length > 0 && (
+                  <CoverageList
+                    heading="Guides"
+                    links={guides.map((p) => ({
+                      title: p.title,
+                      href: `/blog/${p.slug}`,
+                    }))}
+                  />
+                )}
+                {comparisons.length > 0 && (
+                  <CoverageList
+                    heading="Head-to-heads"
+                    links={comparisons.map((c) => ({
+                      title: c.title,
+                      href: `/compare/${c.slug}`,
+                    }))}
+                  />
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* -------------------------------------------- Get started */}
+          {active.length > 0 && (
+            <section id="get-started" className="scroll-mt-28">
+              <SectionHeader
+                kicker="GET STARTED"
+                title={`Ways to start with ${store.name}`}
               />
               <DisclosureLine className="mt-2" />
-              <div className="mt-6">
-                <CouponGrid
-                  coupons={active.map(toTicketCoupon)}
-                  columns={1}
-                  hideStore
-                  animated={false}
-                />
-              </div>
+              <StartOptions offers={active} className="mt-6" />
               {expired.length > 0 && (
                 <details className="mt-6">
                   <summary className="cursor-pointer text-sm font-semibold text-ink-muted hover:text-pine">
-                    Recently expired ({expired.length})
+                    Ended offers ({expired.length})
                   </summary>
-                  <div className="mt-4 grid gap-4">
-                    {expired.map((coupon) => (
-                      <CouponTicket
-                        key={coupon.id}
-                        coupon={toTicketCoupon(coupon)}
-                        hideStore
-                      />
-                    ))}
-                  </div>
+                  <StartOptions offers={expired} ended className="mt-4" />
                 </details>
               )}
             </section>
@@ -445,8 +468,6 @@ export default async function ToolPage({
               </div>
             </section>
           ) : null}
-
-          <PromoSlot placement="in-content" path={`/tools/${store.slug}`} />
         </div>
       </Container>
 
@@ -469,6 +490,38 @@ export default async function ToolPage({
         goHref={goHref}
       />
     </>
+  );
+}
+
+function CoverageList({
+  heading,
+  links,
+}: {
+  heading: string;
+  links: { title: string; href: string }[];
+}) {
+  return (
+    <div>
+      <p className="font-mono text-[0.7rem] font-semibold tracking-[0.15em] text-ink-subtle uppercase">
+        {heading}
+      </p>
+      <ul className="mt-3 space-y-3">
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className="group inline-flex items-start gap-1.5 text-sm font-semibold text-pine hover:text-emerald-600"
+            >
+              {link.title}
+              <ArrowRight
+                className="mt-0.5 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

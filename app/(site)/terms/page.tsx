@@ -20,19 +20,21 @@ export default function TermsPage() {
               <h2 className="text-h4 font-bold text-pine">Using DaddyPromoos</h2>
               <p className="mt-3 leading-relaxed">
                 DaddyPromoos is a free editorial service. You may browse, share
-                links, and use the codes we publish for personal or business
+                links, and use the offers we list for personal or business
                 purchases. Scraping the site, republishing our content at
-                scale, or artificially inflating deal metrics is not permitted.
+                scale, or artificially inflating click or vote metrics is not
+                permitted.
               </p>
             </div>
             <div>
-              <h2 className="text-h4 font-bold text-pine">Deals and accuracy</h2>
+              <h2 className="text-h4 font-bold text-pine">Offers and accuracy</h2>
               <p className="mt-3 leading-relaxed">
-                We verify offers before publishing and show expiry dates where
-                known, but stores control their own promotions and can change
-                or withdraw them without notice. A listed deal is not a
-                guarantee of price; the checkout price shown by the store is
-                final. We are not a party to any purchase you make.
+                Offers link to each brand&apos;s own page, and we show expiry
+                dates where known, but brands control their own pricing and
+                promotions and can change or withdraw them without notice. A
+                listed offer is not a guarantee of price; the price shown by the
+                vendor at checkout is final. We are not a party to any purchase
+                you make.
               </p>
             </div>
             <div>

@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/Badge";
 import { StoreLogo } from "@/components/coupon/StoreLogo";
 import { ArticleRenderer } from "@/components/blog/ArticleRenderer";
 import type { TiptapNode } from "@/components/blog/tiptap";
-import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { CtaBand } from "@/components/marketing/company/CtaBand";
 import { FaqAccordion } from "@/components/marketing/company/FaqAccordion";
 import { MobileCtaBar } from "@/components/marketing/company/MobileCtaBar";
@@ -108,10 +107,9 @@ export default async function ToolPage({
   );
   const hasCoverage = guides.length > 0 || comparisons.length > 0;
 
-  const bestDeal = active[0] ?? null;
-  const goHref = bestDeal
-    ? `/go/${bestDeal.id}`
-    : store.affiliateBaseUrl ?? store.websiteUrl;
+  // Primary CTAs use the store's own affiliate URL, exactly as stored (some
+  // programs require their tracking link unchanged), else its website.
+  const goHref = store.affiliateBaseUrl || store.websiteUrl;
 
   const gallery = store.screenshots?.length
     ? store.screenshots
@@ -222,7 +220,6 @@ export default async function ToolPage({
                 goHref={goHref}
                 hideStartCta={active.length === 0}
               />
-              <DisclosureLine className="mt-3 text-center text-xs" />
             </div>
           </div>
         </Container>
@@ -433,7 +430,6 @@ export default async function ToolPage({
                 kicker="GET STARTED"
                 title={`Ways to start with ${store.name}`}
               />
-              <DisclosureLine className="mt-2" />
               <StartOptions offers={active} className="mt-6" />
               {expired.length > 0 && (
                 <details className="mt-6">

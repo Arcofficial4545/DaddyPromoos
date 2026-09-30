@@ -4,7 +4,6 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { CouponGrid } from "@/components/coupon/CouponGrid";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
-import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { FilterBar } from "@/components/marketing/FilterBar";
 import { PageHeader } from "@/components/marketing/PageHeader";
 import { Pagination } from "@/components/marketing/Pagination";
@@ -86,7 +85,6 @@ export default async function CouponsPage({
       />
       <Section padding="tight">
         <Container size="wide">
-          <DisclosureLine className="mb-6" />
           <Suspense>
             <FilterBar
               searchPlaceholder="Search offers and tools"

@@ -15,6 +15,14 @@ type PromoCardProps = {
  * Presentational promo unit. Pure and client-safe (used by the server
  * PromoSlot and the client popup manager). Solid fills only.
  */
+/** Outbound promo links open in a new tab and are marked as paid; internal
+ * ones (e.g. /build-with-ai) stay plain. */
+function externalLinkProps(url: string) {
+  return /^https?:\/\//i.test(url)
+    ? { target: "_blank", rel: "sponsored nofollow noopener" }
+    : {};
+}
+
 export function PromoCard({ promo, variant = "card", className }: PromoCardProps) {
   if (promo.type === "newsletter") {
     return (
@@ -41,6 +49,37 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
     );
   }
 
+  // Image banner (e.g. an affiliate program's official creative): the image
+  // links to the CTA URL exactly as entered, labelled as an ad.
+  if (
+    promo.type === "custom-card" &&
+    promo.payload.imageUrl &&
+    promo.payload.ctaUrl
+  ) {
+    return (
+      <figure className={cn("not-prose", className)}>
+        <figcaption className="mb-1.5 text-[0.65rem] font-semibold tracking-[0.15em] text-ink-subtle uppercase">
+          Advertisement
+        </figcaption>
+        <a
+          href={promo.payload.ctaUrl}
+          {...externalLinkProps(promo.payload.ctaUrl)}
+          className="block overflow-hidden rounded-[var(--radius-card)]"
+        >
+          {/* A third-party creative, served exactly as the program supplies
+              it — not through next/image. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={promo.payload.imageUrl}
+            alt={promo.payload.title ?? "Advertisement"}
+            loading="lazy"
+            className="h-auto w-full"
+          />
+        </a>
+      </figure>
+    );
+  }
+
   if (promo.type === "custom-card") {
     return (
       <div
@@ -64,6 +103,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
         {promo.payload.ctaUrl && (
           <a
             href={promo.payload.ctaUrl}
+            {...externalLinkProps(promo.payload.ctaUrl)}
             className="btn-gloss btn-pine press-down mt-4 inline-flex h-10 items-center gap-1.5 rounded-[var(--radius-btn)] px-4 text-sm font-semibold"
           >
             {promo.payload.ctaLabel ?? "Learn more"}
@@ -104,7 +144,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
         <a
           href={goHref}
           target="_blank"
-          rel="sponsored noopener"
+          rel="sponsored nofollow noopener"
           className="btn-gloss btn-primary press-down inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-btn)] px-5 text-sm font-semibold"
         >
           {promo.payload.ctaLabel ?? "See the offer"}
@@ -141,7 +181,7 @@ export function PromoCard({ promo, variant = "card", className }: PromoCardProps
       <a
         href={goHref}
         target="_blank"
-        rel="sponsored noopener"
+        rel="sponsored nofollow noopener"
         className="btn-gloss btn-primary press-down mt-4 inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[var(--radius-btn)] text-sm font-semibold"
       >
         {promo.payload.ctaLabel ?? "See the offer"}

@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ fontSize: 24, color: MINT, opacity: 0.7 }}>
-            Independent reviews of AI app builders and coding tools
+            AI app builder and SaaS reviews
           </div>
           <div
             style={{

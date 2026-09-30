@@ -50,7 +50,7 @@ export function MobileCtaBar({
         <a
           href={goHref}
           target="_blank"
-          rel="sponsored noopener"
+          rel="sponsored nofollow noopener"
           tabIndex={show ? 0 : -1}
           className="btn-gloss btn-primary press-down flex h-11 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] text-sm font-semibold"
         >

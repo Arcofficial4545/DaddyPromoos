@@ -162,6 +162,8 @@ export const promoSchema = z
     body: z.string().trim().max(600).default(""),
     ctaLabel: z.string().trim().max(40).default(""),
     ctaUrl: optionalUrl,
+    /** Custom-card banner image (e.g. an affiliate program's creative). */
+    imageUrl: optionalUrl,
     paths: z.string().trim().max(500).default(""),
     excludePaths: z.string().trim().max(500).default(""),
     frequencyCap: z.coerce.number().int().min(1).max(20).default(1),

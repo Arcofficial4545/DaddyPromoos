@@ -14,8 +14,8 @@ import {
   collectHeadings,
   type TiptapNode,
 } from "@/components/blog/tiptap";
-import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { StartOptions } from "@/components/marketing/company/StartOptions";
+import { RotatingSpotlight } from "@/components/marketing/spotlight/RotatingSpotlight";
 import { PromoSlot } from "@/components/promo/PromoSlot";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -27,6 +27,8 @@ import {
   getPublishedPostBySlug,
   listRelatedStoreIds,
 } from "@/lib/db/repositories/posts";
+import { getStoresBySlugs } from "@/lib/db/repositories/stores";
+import { pickWeighted, SPOTLIGHT_WEIGHTS, toSpotlightPool } from "@/lib/picks";
 import { articleLd, breadcrumbLd, ogImageUrl, SITE_URL } from "@/lib/seo/jsonld";
 import { formatDate } from "@/lib/utils";
 
@@ -77,10 +79,22 @@ export default async function ArticlePage({
   const embeddedIds = collectCouponIds(doc);
   const headings = collectHeadings(doc);
 
-  const [embeddedCoupons, relatedStoreIds] = await Promise.all([
+  const [embeddedCoupons, relatedStoreIds, spotlightStores] = await Promise.all([
     getCouponsByIds(embeddedIds),
     listRelatedStoreIds(post.id),
+    getStoresBySlugs(Object.keys(SPOTLIGHT_WEIGHTS)),
   ]);
+
+  // End-of-article banner: a product this article covers when there is one,
+  // otherwise any spotlight product. Re-drawn in the browser on each visit.
+  const coveredSpotlights = toSpotlightPool(
+    spotlightStores.filter((s) => relatedStoreIds.includes(s.id)),
+  );
+  const spotlights =
+    coveredSpotlights.length > 0
+      ? coveredSpotlights
+      : toSpotlightPool(spotlightStores);
+  const [spotlight] = pickWeighted(spotlights, 1);
 
   // Official offers from the tools this article covers.
   const relatedDeals =
@@ -90,8 +104,11 @@ export default async function ArticlePage({
           .slice(0, 4)
       : [];
 
+  // Only live offers render inside articles; a hidden one drops out cleanly.
   const couponMap = new Map(
-    embeddedCoupons.map((c) => [c.id, toTicketCoupon(c)]),
+    embeddedCoupons
+      .filter((c) => c.isActive)
+      .map((c) => [c.id, toTicketCoupon(c)]),
   );
   const articleUrl = `${SITE_URL}/blog/${post.slug}`;
 
@@ -168,8 +185,6 @@ export default async function ArticlePage({
             </div>
 
             <article className="mx-auto w-full max-w-2xl min-w-0">
-              {/* Articles can embed offers, so the disclosure leads the body. */}
-              <DisclosureLine className="mb-8 border-b border-line pb-4 text-xs" />
               <ArticleRenderer
                 doc={doc}
                 coupons={couponMap}
@@ -189,6 +204,14 @@ export default async function ArticlePage({
                     </Badge>
                   ))}
                 </div>
+              )}
+
+              {spotlight && (
+                <RotatingSpotlight
+                  items={spotlights}
+                  initial={spotlight}
+                  className="mt-10"
+                />
               )}
 
               {/* Mobile share */}
@@ -235,7 +258,6 @@ export default async function ArticlePage({
               <h2 className="text-h3 font-bold text-pine">
                 Official offers from tools in this article
               </h2>
-              <DisclosureLine className="mt-2" />
               <StartOptions offers={relatedDeals} showStore className="mt-6" />
             </div>
           )}

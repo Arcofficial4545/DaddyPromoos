@@ -142,10 +142,8 @@ export default function HowWeReviewPage() {
               How we use AI
             </h2>
             <p className="mt-3 leading-relaxed text-ink-muted">
-              We use AI tools to help research and draft our coverage — it would
-              be odd to review AI tools without using them. Scores, verdicts,
-              and what gets published are decided by us, and we check pricing
-              and plan details against each vendor&apos;s official pages.
+              We use AI tools to help research and draft our coverage. Scores,
+              verdicts, and what gets published are our own decisions.
             </p>
           </div>
 

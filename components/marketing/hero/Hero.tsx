@@ -76,16 +76,17 @@ const FLOAT_SLOTS = [
   },
 ];
 
-/** The hook: independent research, a real score, and a reader who leaves
- * ready to build. "Researched" not "Tested": every verdict on this site is
- * desk research against official docs and pricing, not a hands-on lab test.
- * Claiming otherwise is a compliance problem with the brands we cover. */
+/** The hook, matching the page title: what we cover, and that we review it.
+ * "Reviewed", never "Tested": every verdict on this site is desk research
+ * against official docs and pricing, not a hands-on lab test. Claiming
+ * otherwise is a compliance problem with the brands we cover. */
 const HEADLINE: { word: string; accent?: boolean }[] = [
-  { word: "Researched." },
-  { word: "Scored." },
-  { word: "Ready", accent: true },
-  { word: "to", accent: true },
-  { word: "build.", accent: true },
+  { word: "AI" },
+  { word: "app" },
+  { word: "builders" },
+  { word: "and" },
+  { word: "SaaS," },
+  { word: "reviewed.", accent: true },
 ];
 
 export function Hero({ cards, vsChips, quickTags }: HeroProps) {
@@ -299,8 +300,8 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
         </h1>
 
         <p className="hero-rise mt-6 max-w-xl text-body-lg text-mint/85">
-          Independent reviews of the AI app builders and coding tools founders
-          use to ship software &mdash; researched against official docs and
+          Reviews and head-to-head comparisons of AI app builders, coding tools
+          and business software &mdash; researched against official docs and
           pricing, scored 0&ndash;10, with the catch stated up front.
         </p>
 

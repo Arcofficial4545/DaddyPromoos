@@ -72,7 +72,7 @@ export function StartOptions({
               <a
                 href={`/go/${offer.id}`}
                 target="_blank"
-                rel="sponsored noopener"
+                rel="sponsored nofollow noopener"
                 className="btn-gloss btn-secondary press-down inline-flex h-10 shrink-0 items-center gap-1.5 self-start rounded-[var(--radius-btn)] px-4 text-sm font-semibold"
               >
                 {source ? `Open on ${source}` : `Visit ${offer.store.name}`}

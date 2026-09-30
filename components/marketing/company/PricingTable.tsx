@@ -57,7 +57,7 @@ export function PricingTable({
         <a
           href={pricingUrl}
           target="_blank"
-          rel="sponsored noopener"
+          rel="nofollow noopener"
           className="font-medium text-pine underline hover:text-emerald-600"
         >
           check the official {brandName} pricing page

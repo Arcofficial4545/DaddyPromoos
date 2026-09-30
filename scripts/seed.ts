@@ -52,17 +52,9 @@ const days = (n: number) => new Date(now + n * 86_400_000);
 const REVIEWED_AT = new Date(now - 3 * 86_400_000);
 
 /* ------------------------------------------------------------------ */
-/* Bylines + store SEO copy (shared with scripts/reposition-builder-   */
-/* focus.ts, which brings production in line with these values)       */
+/* Store SEO copy (shared with scripts/reposition-builder-focus.ts,    */
+/* which brings production in line with these values)                 */
 /* ------------------------------------------------------------------ */
-
-export const FOUNDER_BIO =
-  "Founder and CEO of DaddyPromoos. Abdul writes on how we research and score tools, and why every verdict names the catch, not just the praise.";
-
-/** The publication's own byline, for coverage not written by a named person. */
-export const HOUSE_BYLINE = "DaddyPromoos Editorial";
-export const HOUSE_BYLINE_BIO =
-  "Research-based coverage from the DaddyPromoos team. Pricing and plan details are checked against each vendor's official pages, and scores follow our published five-criteria method.";
 
 export const storeSeoTitle = (name: string) =>
   `${name} Review: Pricing, Pros & Cons`;
@@ -333,7 +325,6 @@ const storeSeed: StoreSeed[] = [
       "Sage provides accounting, payroll, and HR software tailored to UK small and mid-sized businesses. Making Tax Digital compliance, solid reporting, and accountant familiarity have kept it a mainstay of British bookkeeping for decades.",
     websiteUrl: "https://www.sage.com/en-gb/",
     rating: 3.9,
-    isActive: false, // off-focus for an AI-builder site; kept, not published
     isFeatured: true,
     cats: ["accounting-finance", "saas"],
     heroSummary:
@@ -639,7 +630,6 @@ const storeSeed: StoreSeed[] = [
       "QuickBooks automates bookkeeping, invoicing, and tax prep for millions of small businesses. Deep bank integrations and accountant familiarity make it the default in North America.",
     websiteUrl: "https://quickbooks.intuit.com",
     rating: 4.0,
-    isActive: false, // off-focus for an AI-builder site; kept, not published
     cats: ["accounting-finance", "saas"],
     heroSummary:
       "QuickBooks Online, by Intuit, is the default small-business accounting suite in North America: automated bank feeds, invoicing, expense capture, and tax-ready reports, with payroll available as an add-on. Nearly every US accountant works in it daily.",
@@ -683,7 +673,6 @@ const storeSeed: StoreSeed[] = [
       "Shopify powers everything from first stores to enterprise brands with hosted storefronts, payments, and a vast app ecosystem. Its famous intro offer makes starting nearly free.",
     websiteUrl: "https://www.shopify.com",
     rating: 4.4,
-    isActive: false, // off-focus for an AI-builder site; kept, not published
     cats: ["e-commerce", "saas"],
     heroSummary:
       "Shopify is the leading hosted e-commerce platform: storefront, checkout, payments, and inventory in one subscription, extended by thousands of apps and themes. It scales from a first side-project store to enterprise brands on Shopify Plus.",
@@ -2797,26 +2786,28 @@ async function main() {
     .values([
       {
         name: "Abdul Rehman Ch",
-        bio: FOUNDER_BIO,
+        bio: "Founder and CEO of DaddyPromoos. Abdul writes on how we test tools and why every verdict names the catch, not just the praise.",
         role: "Founder & CEO",
       },
       {
-        name: HOUSE_BYLINE,
-        bio: HOUSE_BYLINE_BIO,
-        role: "Editorial team",
+        name: "Maya Whitfield",
+        bio: "Senior Editor at DaddyPromoos. Maya has covered SaaS pricing, AI tooling, and the business of software for eight years.",
+        role: "Senior Editor",
+      },
+      {
+        name: "Haw",
+        bio: "Editor at DaddyPromoos. Haw covers no-code, productivity, and the everyday tools small teams actually run on.",
+        role: "Editor",
       },
     ])
     .returning();
-  const [abdul, editorial] = authorRows;
-  // The methodology/trust piece is bylined to the founder. Everything else
-  // keeps the original three-slot rotation, with both non-founder slots on the
-  // house byline: there are no other named editors, and a byline must never
-  // invent one.
-  const bylineRotation = [abdul, editorial, editorial];
+  const [abdul] = authorRows;
+  // The methodology/trust piece is bylined to the founder; everything else
+  // rotates across the editorial team so posts read as a real newsroom.
   const authorIdForPost = (slug: string, i: number): string =>
     slug === "how-we-score-every-tool"
       ? abdul.id
-      : bylineRotation[i % bylineRotation.length].id;
+      : authorRows[i % authorRows.length].id;
 
   const postSeed = buildPostSeed({
     catBySlug,

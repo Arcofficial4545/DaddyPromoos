@@ -265,7 +265,7 @@ export function CouponTicket({
           showVotePrompt && !voted ? (
             <div className="flex flex-col items-center gap-2" aria-live="polite">
               <p className="text-xs font-medium text-ink">
-                Did <span className="font-mono">{coupon.code}</span> work?
+                Did <span className="font-mono">{coupon.code}</span>{" "}work?
               </p>
               <div className="flex gap-1.5">
                 <button
@@ -321,7 +321,7 @@ export function CouponTicket({
             <a
               href={goHref}
               target="_blank"
-              rel="sponsored noopener"
+              rel="sponsored nofollow noopener"
               onClick={handleReveal}
               aria-label={`Reveal code for ${coupon.title} and open ${coupon.store.name}`}
               className="group flex flex-col items-center gap-2"
@@ -338,7 +338,7 @@ export function CouponTicket({
           <a
             href={goHref}
             target="_blank"
-            rel="sponsored noopener"
+            rel="sponsored nofollow noopener"
             onClick={handleReveal}
             aria-label={`View this offer on ${coupon.store.name}'s site`}
             className="btn-gloss btn-primary press-down inline-flex h-10 items-center gap-1.5 rounded-[var(--radius-btn)] px-4 text-xs font-semibold sm:text-sm"

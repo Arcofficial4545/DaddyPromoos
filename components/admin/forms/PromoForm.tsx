@@ -36,6 +36,7 @@ type FormValues = {
   body: string;
   ctaLabel: string;
   ctaUrl: string;
+  imageUrl: string;
   paths: string;
   excludePaths: string;
   frequencyCap: number;
@@ -79,6 +80,7 @@ export function PromoForm({
       body: promo?.payload.body ?? "",
       ctaLabel: promo?.payload.ctaLabel ?? "",
       ctaUrl: promo?.payload.ctaUrl ?? "",
+      imageUrl: promo?.payload.imageUrl ?? "",
       paths: promo?.targetingRules.paths?.join(", ") ?? "",
       excludePaths: promo?.targetingRules.excludePaths?.join(", ") ?? "",
       frequencyCap: promo?.targetingRules.frequencyCap ?? 1,
@@ -106,6 +108,7 @@ export function PromoForm({
       ...(values.body ? { body: values.body } : {}),
       ...(values.ctaLabel ? { ctaLabel: values.ctaLabel } : {}),
       ...(values.ctaUrl ? { ctaUrl: values.ctaUrl } : {}),
+      ...(values.imageUrl ? { imageUrl: values.imageUrl } : {}),
     },
     targetingRules: {},
     coupon: previewCoupon
@@ -202,6 +205,22 @@ export function PromoForm({
               placeholder="https://... or /tools/..."
               className={inputClasses}
               {...register("ctaUrl")}
+            />
+          </Field>
+        )}
+
+        {values.type === "custom-card" && (
+          <Field
+            label="Banner image URL (optional)"
+            htmlFor="promo-image-url"
+            hint="Turns the card into an image banner linking to the CTA URL. For an affiliate banner, paste the creative's image src here and its link, unchanged, as the CTA URL. Never use a popup placement for it."
+          >
+            <input
+              id="promo-image-url"
+              type="url"
+              placeholder="https://..."
+              className={inputClasses}
+              {...register("imageUrl")}
             />
           </Field>
         )}

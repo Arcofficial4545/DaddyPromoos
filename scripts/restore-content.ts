@@ -44,20 +44,17 @@ import { buildPostSeed, buildPromoSeed, comparisonSeed } from "./seed";
 const DRY_RUN = process.argv.includes("--dry-run");
 
 /**
- * The seed's three-slot byline rotation (`slots[i % 3]`): the founder, then
- * the house byline twice — there are no other named editors. Restated here so
- * a restore reproduces the bylines the seed would have written.
+ * The seed inserts these three authors in this exact order and bylines posts
+ * with `authorRows[i % authorRows.length]`. All three rows carry an identical
+ * created_at, so the database cannot report that order back — it is restated
+ * here so the rotation reproduces the bylines the seed would have written.
  */
-const AUTHOR_ORDER = [
-  "Abdul Rehman Ch",
-  "DaddyPromoos Editorial",
-  "DaddyPromoos Editorial",
-] as const;
+const AUTHOR_ORDER = ["Abdul Rehman Ch", "Maya Whitfield", "Haw"] as const;
 
 /** Coupon titles that post content and promo payloads embed by id. */
 const OFFER_TITLES = {
   base44Offer: "Free plan — build and publish without a card",
-  lovableOffer: "Free plan — 5 build credits a day",
+  lovableOffer: "Free tier — daily messages, real code output",
   sageOffer: "Current new-customer offer on Sage Accounting",
   shopifyOffer: "Shopify's standing new-merchant intro offer",
   canvaOffer: "Canva Pro free trial for new users",
@@ -108,7 +105,7 @@ async function main() {
   const promoSeed = buildPromoSeed(offers);
 
   // Same rotation as the seed: the methodology piece is the founder's, the
-  // rest follow the three-slot rotation above.
+  // rest rotate across the editorial team in insert order.
   const authorIdForPost = (slug: string, i: number): string =>
     slug === "how-we-score-every-tool"
       ? authorRows[0].id

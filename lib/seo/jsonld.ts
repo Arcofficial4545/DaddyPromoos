@@ -14,7 +14,7 @@ export function organizationLd(): JsonLdObject {
     url: SITE_URL,
     logo: `${SITE_URL}/og?title=${encodeURIComponent(SITE_NAME)}`,
     description:
-      "Independent reviews of the AI app builders and coding tools founders use to ship software.",
+      "Reviews and head-to-head comparisons of AI app builders, coding tools and business software.",
   };
 }
 
@@ -177,11 +177,7 @@ export function articleLd(post: {
       ? { datePublished: post.publishedAt.toISOString() }
       : {}),
     dateModified: post.updatedAt.toISOString(),
-    // The house byline ("DaddyPromoos Editorial") is the publication, not a
-    // person — marking it up as a Person would claim an individual author.
-    author: post.authorName.startsWith(SITE_NAME)
-      ? { "@type": "Organization", name: post.authorName, url: SITE_URL }
-      : { "@type": "Person", name: post.authorName },
+    author: { "@type": "Person", name: post.authorName },
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,

@@ -5,7 +5,6 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { CategoryIcon } from "@/components/marketing/CategoryIcon";
-import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { PageHeader } from "@/components/marketing/PageHeader";
 import { StoreCard } from "@/components/marketing/StoreCard";
 import { StartOptions } from "@/components/marketing/company/StartOptions";
@@ -115,7 +114,6 @@ export default async function CategoryPage({
               <h2 className="text-h3 font-bold text-pine">
                 Official offers in {category.name}
               </h2>
-              <DisclosureLine className="mt-2" />
               <StartOptions offers={offers} showStore className="mt-6" />
             </div>
           )}

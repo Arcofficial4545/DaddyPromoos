@@ -13,6 +13,8 @@ const columns = [
       { href: "/compare", label: "Compare" },
       { href: "/tools", label: "Tools" },
       { href: "/blog", label: "Blog" },
+      // /deals is linked from here only — never the top nav or homepage.
+      { href: "/deals", label: "Offers" },
     ],
   },
   {

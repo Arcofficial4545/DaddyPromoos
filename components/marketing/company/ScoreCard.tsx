@@ -82,7 +82,7 @@ export function ScoreCard({
       <a
         href={goHref}
         target="_blank"
-        rel="sponsored noopener"
+        rel="sponsored nofollow noopener"
         className="btn-gloss btn-primary press-down mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-[var(--radius-btn)] text-sm font-semibold"
       >
         Visit {toolName}

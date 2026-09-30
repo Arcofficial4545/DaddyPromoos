@@ -8,7 +8,6 @@ import { StoreLogo } from "@/components/coupon/StoreLogo";
 import { StartOptions } from "@/components/marketing/company/StartOptions";
 import { ComparisonTable } from "@/components/marketing/company/ComparisonTable";
 import { ScoreCard } from "@/components/marketing/company/ScoreCard";
-import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getComparisonBySlug,
@@ -55,10 +54,10 @@ export async function generateMetadata({
   };
 }
 
-function goHrefFor(store: StoreWithMeta, couponId: string | null): string {
-  return couponId
-    ? `/go/${couponId}`
-    : store.affiliateBaseUrl ?? store.websiteUrl;
+/** Primary CTAs use the store's own affiliate URL, exactly as stored (some
+ * programs require their tracking link unchanged), else its website. */
+function goHrefFor(store: StoreWithMeta): string {
+  return store.affiliateBaseUrl || store.websiteUrl;
 }
 
 export default async function ComparisonPage({
@@ -75,8 +74,8 @@ export default async function ComparisonPage({
     listCouponsForStore(storeA.id),
     listCouponsForStore(storeB.id),
   ]);
-  const goA = goHrefFor(storeA, aCoupons.active[0]?.id ?? null);
-  const goB = goHrefFor(storeB, bCoupons.active[0]?.id ?? null);
+  const goA = goHrefFor(storeA);
+  const goB = goHrefFor(storeB);
 
   const articleLd = {
     "@context": "https://schema.org",
@@ -163,7 +162,6 @@ export default async function ComparisonPage({
               hideStartCta
             />
           </div>
-          <DisclosureLine className="mt-4 text-center text-xs" />
         </Container>
       </section>
 
@@ -236,7 +234,7 @@ export default async function ComparisonPage({
                 <a
                   href={goA}
                   target="_blank"
-                  rel="sponsored noopener"
+                  rel="sponsored nofollow noopener"
                   className="btn-gloss btn-primary press-down inline-flex h-11 items-center justify-center gap-2 rounded-[var(--radius-btn)] px-6 text-sm font-semibold"
                 >
                   Visit {storeA.name}
@@ -244,7 +242,7 @@ export default async function ComparisonPage({
                 <a
                   href={goB}
                   target="_blank"
-                  rel="sponsored noopener"
+                  rel="sponsored nofollow noopener"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-white/25 px-6 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                 >
                   Visit {storeB.name}
@@ -297,7 +295,7 @@ function QuickVerdict({
       <a
         href={goHref}
         target="_blank"
-        rel="sponsored noopener"
+        rel="sponsored nofollow noopener"
         className="btn-gloss btn-pine press-down mt-4 inline-flex h-10 items-center justify-center gap-1.5 rounded-[var(--radius-btn)] text-sm font-semibold"
       >
         Visit {store.name}

@@ -9,6 +9,7 @@ import { CategoryIcon } from "@/components/marketing/CategoryIcon";
 import { Hero } from "@/components/marketing/hero/Hero";
 import { LogoMarquee } from "@/components/marketing/LogoMarquee";
 import { NewsletterForm } from "@/components/marketing/NewsletterForm";
+import { StoreCard } from "@/components/marketing/StoreCard";
 import {
   FeaturedComparison,
   type Matchup,
@@ -17,26 +18,47 @@ import {
   RotatingReviews,
   type ReviewItem,
 } from "@/components/marketing/home/RotatingReviews";
-import { TopPick, type TopPickData } from "@/components/marketing/home/TopPick";
+import {
+  TopBuilders,
+  type RankedBuilder,
+} from "@/components/marketing/home/TopBuilders";
+import { ProductSpotlight } from "@/components/marketing/spotlight/ProductSpotlight";
 import { Reveal } from "@/components/motion/Reveal";
 import { listPublishedComparisons } from "@/lib/db/repositories/comparisons";
 import { listCategories } from "@/lib/db/repositories/categories";
-import { listCouponsForStore } from "@/lib/db/repositories/coupons";
+import { listPublishedPosts } from "@/lib/db/repositories/posts";
 import {
-  listPublishedPosts,
-  listPublishedPostsBySlugs,
-} from "@/lib/db/repositories/posts";
-import { listReviewedStores } from "@/lib/db/repositories/stores";
+  listReviewedStores,
+  type StoreWithMeta,
+} from "@/lib/db/repositories/stores";
+import { pickWeighted, toSpotlightPool, TOP_BUILDERS } from "@/lib/picks";
 import { formatDate } from "@/lib/utils";
 
-/** Our top pick for founders who don't write code, and the published guides
- * that take a reader from choosing it to launching with it. Missing or
- * unpublished guides are skipped. */
-const TOP_PICK_SLUG = "lovable";
-const TOP_PICK_GUIDE_SLUGS = [
-  "lovable-pricing-and-credits-explained",
-  "shipping-your-first-app-with-lovable",
-];
+/** The "Business software" row, in display order. */
+const BUSINESS_SOFTWARE_SLUGS = ["sage-uk", "quickbooks", "shopify"];
+
+/** Picks stores by slug in the given order, skipping any not in the pool
+ * (hidden or not yet reviewed). */
+function inOrder<T extends { slug: string }>(pool: T[], slugs: string[]): T[] {
+  const bySlug = new Map(pool.map((s) => [s.slug, s]));
+  return slugs
+    .map((slug) => bySlug.get(slug))
+    .filter((s): s is T => s !== undefined);
+}
+
+/** A random item, or null for an empty list. Called per request: the route is
+ * force-dynamic, so each reload can show a different head-to-head. */
+function pickOne<T>(items: T[]): T | null {
+  return items.length > 0
+    ? items[Math.floor(Math.random() * items.length)]
+    : null;
+}
+
+/** "One. Two." → "One." — for one-line verdicts on cards. */
+function firstSentence(text: string | null): string | null {
+  if (!text) return null;
+  return text.split(/(?<=[.!?])\s+/)[0];
+}
 
 /**
  * Rendered on demand rather than prerendered. Build-time static generation of
@@ -59,8 +81,9 @@ export const dynamic = "force-dynamic";
  * Next propagates those up to the route, which is why the build route table
  * reports an expire of 1d — a value the segment config cannot express.
  *
- * Per-visit rotation of the hero chips, head-to-head band, and reviews happens
- * client-side in the browser, so caching here costs no variety.
+ * Per-visit variety costs nothing here: the hero chips and reviews rotate
+ * client-side, and the head-to-head band and the two spotlight banners are
+ * picked per request from the cached lists.
  */
 async function getHomeData() {
   "use cache";
@@ -71,54 +94,44 @@ async function getHomeData() {
     { posts: latestPosts },
     reviewedStores,
     comparisons,
-    pickGuides,
   ] = await Promise.all([
     listCategories(),
     listPublishedPosts({ limit: 2 }),
     listReviewedStores(),
     listPublishedComparisons(),
-    listPublishedPostsBySlugs(TOP_PICK_GUIDE_SLUGS),
   ]);
 
   // A category whose tools were all deactivated would render as "0 tools".
   const categories = allCategories.filter((c) => c.storeCount > 0);
 
-  // "Where to start" band. Its CTA goes through the tracked /go redirect for
-  // the pick's lead offer (its free plan), like the review page's CTA does.
-  const pickStore = reviewedStores.find((s) => s.slug === TOP_PICK_SLUG);
-  let topPick: TopPickData | null = null;
-  if (pickStore) {
-    const { active } = await listCouponsForStore(pickStore.id);
-    topPick = {
-      name: pickStore.name,
-      slug: pickStore.slug,
-      logoUrl: pickStore.logoUrl,
-      themeColor: pickStore.themeColor,
-      score: pickStore.editorialScore,
-      verdict: pickStore.verdict,
-      goHref: active[0]
-        ? `/go/${active[0].id}`
-        : (pickStore.affiliateBaseUrl ?? pickStore.websiteUrl),
-      ctaLabel: `Try ${pickStore.name} free`,
-      guides: [
-        {
-          title: "Build your first app with AI — our step-by-step guide",
-          href: "/build-with-ai",
-        },
-        {
-          title: `${pickStore.name} review: score, pricing, pros and cons`,
-          href: `/tools/${pickStore.slug}`,
-        },
-        ...pickGuides.map((p) => ({ title: p.title, href: `/blog/${p.slug}` })),
-      ],
-      comparisons: comparisons
-        .filter(
-          (c) =>
-            c.storeA.slug === TOP_PICK_SLUG || c.storeB.slug === TOP_PICK_SLUG,
-        )
-        .map((c) => ({ title: c.title, href: `/compare/${c.slug}` })),
-    };
-  }
+  // The ranking, spotlights and business row all come from `reviewedStores`
+  // (active, fully reviewed), so they add no queries and skip anything hidden.
+  const labelBySlug = new Map(TOP_BUILDERS.map((b) => [b.slug, b.label]));
+  const topBuilders: RankedBuilder[] = inOrder(
+    reviewedStores,
+    TOP_BUILDERS.map((b) => b.slug),
+  ).map((s) => ({
+    name: s.name,
+    slug: s.slug,
+    logoUrl: s.logoUrl,
+    themeColor: s.themeColor,
+    score: s.editorialScore,
+    label: labelBySlug.get(s.slug) ?? "",
+    verdict: firstSentence(s.verdict),
+    bestFor: s.useItFor,
+    tryHref: s.affiliateBaseUrl || s.websiteUrl,
+  }));
+  const spotlights = toSpotlightPool(reviewedStores);
+  // No offer badges on homepage cards, and no review body in the cache entry.
+  const businessSoftware: StoreWithMeta[] = inOrder(
+    reviewedStores,
+    BUSINESS_SOFTWARE_SLUGS,
+  ).map((s) => ({
+    ...s,
+    reviewBody: null,
+    bestDiscountLabel: null,
+    activeCouponCount: 0,
+  }));
 
   // Slim data pools handed to the client components, which pick their random
   // selection on mount (keeps the page cacheable and the payload small).
@@ -134,12 +147,23 @@ async function getHomeData() {
     updatedLabel: s.lastReviewedAt ? formatDate(s.lastReviewedAt) : null,
   }));
 
+  // Every published comparison is a candidate for the head-to-head band; the
+  // page picks one per request (see `pickOne`).
+  const side = (s: StoreWithMeta) => ({
+    name: s.name,
+    slug: s.slug,
+    logoUrl: s.logoUrl,
+    themeColor: s.themeColor,
+    score: s.editorialScore,
+  });
   const matchups: Matchup[] = comparisons.map((c) => ({
     title: c.title,
     subtitle: c.subtitle,
     slug: c.slug,
-    storeAName: c.storeA.name,
-    storeBName: c.storeB.name,
+    a: side(c.storeA),
+    b: side(c.storeB),
+    verdictA: c.verdictA,
+    verdictB: c.verdictB,
     criteria: c.criteria.map((r) => ({ label: r.label, winner: r.winner })),
   }));
 
@@ -180,7 +204,9 @@ async function getHomeData() {
   ];
 
   return {
-    topPick,
+    topBuilders,
+    spotlights,
+    businessSoftware,
     categories,
     // Drop `contentJson` and friends — the cards render only these fields, and
     // the full Tiptap body would otherwise be serialized into the cache entry.
@@ -242,7 +268,9 @@ function SectionHead({
 
 export default async function HomePage() {
   const {
-    topPick,
+    topBuilders,
+    spotlights,
+    businessSoftware,
     categories,
     posts: latestPosts,
     reviewItems,
@@ -254,6 +282,9 @@ export default async function HomePage() {
     comparisonsCount,
   } = await getHomeData();
 
+  // Two different products per request, weighted towards Lovable and Base44.
+  const [spotlightA, spotlightB] = pickWeighted(spotlights, 2);
+
   return (
     <>
       <Hero
@@ -264,15 +295,15 @@ export default async function HomePage() {
         quickTags={quickTags}
       />
 
+      {/* ================================ Ranking: best AI app builders */}
+      <TopBuilders builders={topBuilders} />
+
       <LogoMarquee
         logos={reviewItems.map((s) => ({
           name: s.name,
           logoUrl: s.logoUrl,
         }))}
       />
-
-      {/* ================================== Where to start (top pick, mint) */}
-      {topPick && <TopPick pick={topPick} />}
 
       {/* ============================================= Latest reviews (rows) */}
       {reviewItems.length > 0 && (
@@ -292,8 +323,17 @@ export default async function HomePage() {
         </Section>
       )}
 
+      {/* ------------------------------------------------ Spotlight banner 1 */}
+      {spotlightA && (
+        <Section padding="none" className="pb-16 sm:pb-24">
+          <Container size="wide">
+            <ProductSpotlight item={spotlightA} />
+          </Container>
+        </Section>
+      )}
+
       {/* ==================================== Featured comparison (pine band) */}
-      <FeaturedComparison matchup={matchups[0] ?? null} />
+      <FeaturedComparison matchup={pickOne(matchups)} />
 
       {/* ------------------------------------------- Browse by category (rows) */}
       <Section>
@@ -336,6 +376,29 @@ export default async function HomePage() {
           </ul>
         </Container>
       </Section>
+
+      {/* ------------------------------ Business software (reviews only) */}
+      {businessSoftware.length > 0 && (
+        <Section tone="mint" padding="tight">
+          <Container size="wide">
+            <SectionHead kicker="Also reviewed" title="Business software" />
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {businessSoftware.map((store) => (
+                <StoreCard key={store.id} store={store} />
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* ------------------------------------------------ Spotlight banner 2 */}
+      {spotlightB && (
+        <Section padding="none" className="pt-16 sm:pt-24">
+          <Container size="wide">
+            <ProductSpotlight item={spotlightB} tone="dark" />
+          </Container>
+        </Section>
+      )}
 
       {/* ------------------------------------------ From the blog (2 wide) */}
       {latestPosts.length > 0 && (

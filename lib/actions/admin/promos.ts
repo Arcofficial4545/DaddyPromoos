@@ -38,6 +38,7 @@ export async function savePromo(
       ...(d.body ? { body: d.body } : {}),
       ...(d.ctaLabel ? { ctaLabel: d.ctaLabel } : {}),
       ...(d.ctaUrl ? { ctaUrl: d.ctaUrl } : {}),
+      ...(d.imageUrl ? { imageUrl: d.imageUrl } : {}),
     },
     targetingRules: {
       ...(toCsvList(d.paths) ? { paths: toCsvList(d.paths) } : {}),
